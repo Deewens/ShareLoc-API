@@ -1,2 +1,2 @@
 # ShareLoc API
-- Auteurs : Nemanja Alabic et Adrien Dudon
+- Auteurs : Nemanja ALABIC et Adrien Dudon
