@@ -4,26 +4,34 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "user_houseshare")
-@IdClass(UserHouseshareId.class)
 public class UserHouseshare {
     @Id
-    @Column(name = "user_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_houseshare_id")
+    private int user_houseshare_id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private User user;
-    @Id
-    @Column(name = "houseshare_id")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "houseshare_id", referencedColumnName = "houseshare_id")
-    private Houseshare houseshareId;
+    private Houseshare houseshare;
     private int points;
 
     public UserHouseshare() {}
 
-    public UserHouseshare(User user, Houseshare houseshareId, int points) {
+    public UserHouseshare(int user_houseshare_id, User user, Houseshare houseshare, int points) {
+        this.user_houseshare_id = user_houseshare_id;
         this.user = user;
-        this.houseshareId = houseshareId;
+        this.houseshare = houseshare;
         this.points = points;
+    }
+
+    public int getUser_houseshare_id() {
+        return user_houseshare_id;
+    }
+
+    public void setUser_houseshare_id(int user_houseshare_id) {
+        this.user_houseshare_id = user_houseshare_id;
     }
 
     public User getUser() {
@@ -34,12 +42,12 @@ public class UserHouseshare {
         this.user = user;
     }
 
-    public Houseshare getHouseshareId() {
-        return houseshareId;
+    public Houseshare getHouseshare() {
+        return houseshare;
     }
 
-    public void setHouseshareId(Houseshare houseshareId) {
-        this.houseshareId = houseshareId;
+    public void setHouseshare(Houseshare houseshare) {
+        this.houseshare = houseshare;
     }
 
     public int getPoints() {

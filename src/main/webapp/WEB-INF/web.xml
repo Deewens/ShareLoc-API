@@ -9,7 +9,7 @@
         <class-name>org.mariadb.jdbc.MariaDbDataSource</class-name>
         <server-name>mysql.iutrs.unistra.fr</server-name>
         <port-number>3306</port-number>
-        <database-name>devservweb</database-name>
+        <database-name>sharelocda</database-name>
         <user>adudon</user>
         <password>z237fvPB446x</password>
     </data-source>
