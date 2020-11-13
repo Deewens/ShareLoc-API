@@ -5,10 +5,10 @@ import model.ejb.User;
 
 import javax.validation.constraints.NotEmpty;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.HashMap;
 import java.util.Optional;
 
 @Path("/")
@@ -29,5 +29,23 @@ public class AuthRessource {
         GenericEntity<User> entity = new GenericEntity<>(user) {};
 
         return Response.ok(entity).build();
+    }
+
+    @POST
+    @Path("register")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response register(@QueryParam("email") String email, @QueryParam("pseudo") String pseudo,
+                             @QueryParam("password") String password, @QueryParam("firstname") String firstname,
+                             @QueryParam("lastname") String lastname) {
+        HashMap<String, String> errorMsgs = AuthManager.register(email, pseudo, password, firstname, lastname);
+
+        if (errorMsgs.isEmpty()) {
+            return Response.ok().build();
+        } else {
+            GenericEntity<HashMap<String, String>> entity =
+                    new GenericEntity<>(errorMsgs) {};
+
+            return Response.status(Response.Status.BAD_REQUEST).entity(entity).build();
+        }
     }
 }

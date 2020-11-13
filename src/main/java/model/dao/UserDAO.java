@@ -11,11 +11,11 @@ public class UserDAO extends DAO<User> {
         super(User.class);
     }
 
-    public Optional<User> findByEmail(String username) {
+    public Optional<User> findByEmail(String email) {
         User user;
 
         Query query = em.createQuery("SELECT u FROM User u WHERE u.email = :email");
-        query.setParameter("email", username);
+        query.setParameter("email", email);
 
         try {
             user = (User) query.getSingleResult();
