@@ -1,6 +1,6 @@
-package model.dao;
+package shareloc.model.dao;
 
-import model.ejb.UserHouseshare;
+import shareloc.model.ejb.UserHouseshare;
 
 public class UserHouseshareDAO extends DAO<UserHouseshare> {
     public UserHouseshareDAO() {

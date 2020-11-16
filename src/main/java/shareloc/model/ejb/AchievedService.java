@@ -1,4 +1,4 @@
-package model.ejb;
+package shareloc.model.ejb;
 
 import javax.persistence.*;
 import java.util.Date;

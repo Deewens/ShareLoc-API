@@ -1,6 +1,6 @@
-package model.dao;
+package shareloc.model.dao;
 
-import model.ejb.AchievedService;
+import shareloc.model.ejb.AchievedService;
 
 public class AchievedServiceDAO extends DAO<AchievedService> {
     public AchievedServiceDAO() {

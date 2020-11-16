@@ -1,4 +1,4 @@
-package model.ejb;
+package shareloc.model.ejb;
 
 import javax.persistence.*;
 
@@ -24,6 +24,14 @@ public class User {
 
     public User(int userId, String pseudo, String email, String password, String firstname, String lastname) {
         this.userId = userId;
+        this.pseudo = pseudo;
+        this.email = email;
+        this.password = password;
+        this.firstname = firstname;
+        this.lastname = lastname;
+    }
+
+    public User(String pseudo, String email, String password, String firstname, String lastname) {
         this.pseudo = pseudo;
         this.email = email;
         this.password = password;
