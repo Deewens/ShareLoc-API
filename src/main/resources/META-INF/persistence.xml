@@ -3,13 +3,13 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd"
              version="2.2">
-    <persistence-unit name="MariaDB">
+    <persistence-unit name="MariaDB" transaction-type="JTA">
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
         <jta-data-source>java:global/mariadb</jta-data-source>
         <properties>
-            <property name="javax.persistence.jdbc.driver" value="org.mariadb.jdbc.Driver" />
-            <property name="javax.persistence.jdbc.url" value="jdbc:mariadb://mysql.iutrs.unistra.fr:3306/sharelocda" />
-            <property name="javax.persistence.jdbc.user" value="adudon" />
-            <property name="javax.persistence.jdbc.password" value="z237fvPB446x" />
+            <property name="eclipselink.target-database" value="MySQL"/>
+            <property name="eclipselink.logging.level.sql" value="FINE"/>
+            <property name="eclipselink.logging.parameters" value="true"/>
         </properties>
     </persistence-unit>
 </persistence>
