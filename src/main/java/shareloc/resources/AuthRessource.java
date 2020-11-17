@@ -2,6 +2,7 @@ package shareloc.resources;
 
 import shareloc.model.AuthManager;
 import shareloc.model.ejb.User;
+import shareloc.security.JWTokenUtility;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotEmpty;
@@ -31,9 +32,11 @@ public class AuthRessource {
         }
 
         User user = userOptional.get();
-        GenericEntity<User> entity = new GenericEntity<>(user) {};
+        HashMap<String, Object> data = new HashMap<String, Object>();
+        data.put("token", JWTokenUtility.buildJWT(user.getPseudo()));
+        data.put("user",userOptional);
 
-        return Response.ok(entity).build();
+        return Response.ok().entity(data).build();
     }
 
     @POST
