@@ -27,12 +27,12 @@ public class AuthRessource {
 
         Optional<User> userOptional = authManager.login(email, password);
 
-        if(!userOptional.isPresent()) {
+        if(userOptional.isEmpty()) {
             return Response.status(Response.Status.NOT_ACCEPTABLE).build();
         }
 
         User user = userOptional.get();
-        HashMap<String, Object> data = new HashMap<String, Object>();
+        HashMap<String, Object> data = new HashMap<>();
         data.put("token", JWTokenUtility.buildJWT(user.getPseudo()));
         data.put("user",userOptional);
 
