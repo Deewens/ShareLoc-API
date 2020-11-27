@@ -45,13 +45,20 @@ public class AuthRessource {
     public Response register(@QueryParam("email") String email, @QueryParam("pseudo") String pseudo,
                              @QueryParam("password") String password, @QueryParam("firstname") String firstname,
                              @QueryParam("lastname") String lastname) {
-        HashMap<String, List<String>> errorMsgs = authManager.register(email, pseudo, password, firstname, lastname);
+        List<HashMap<String, String>> errorMsgs = authManager.register(email, pseudo, password, firstname, lastname);
 
-        if (errorMsgs.isEmpty()) {
-            return Response.ok().build();
+        if (errorMsgs.isEmpty()) { // Si la liste est vide, il n'y a pas eu d'erreur
+            HashMap<String, String> success = new HashMap<>();
+            success.put("title", "Inscription réussie");
+            success.put("message", "L'utilisateur a été ajouté en base de données.");
+            GenericEntity<HashMap<String, String>> entity = new GenericEntity<>(success) {};
+            return Response.ok().entity(entity).build();
         } else {
-            GenericEntity<HashMap<String, List<String>>> entity = new GenericEntity<>(errorMsgs) {};
-            return Response.status(Response.Status.BAD_REQUEST).entity(entity).build();
+            HashMap<String, List<HashMap<String, String>>> errors = new HashMap<>();
+            errors.put("errors", errorMsgs);
+
+            GenericEntity<HashMap<String, List<HashMap<String, String>>>> entity = new GenericEntity<>(errors) {};
+            return Response.status(422).entity(entity).build();
         }
     }
 }
