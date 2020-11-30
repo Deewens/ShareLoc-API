@@ -16,14 +16,16 @@ public class UserHouseshare {
     @JoinColumn(name = "houseshare_id", referencedColumnName = "houseshare_id")
     private Houseshare houseshare;
     private int points;
+    @Column(name = "is_manager")
+    private boolean isManager;
 
     public UserHouseshare() {}
 
-    public UserHouseshare(int user_houseshare_id, User user, Houseshare houseshare, int points) {
-        this.user_houseshare_id = user_houseshare_id;
+    public UserHouseshare(User user, Houseshare houseshare, int points, boolean isManager) {
         this.user = user;
         this.houseshare = houseshare;
         this.points = points;
+        this.isManager = isManager;
     }
 
     public int getUser_houseshare_id() {
@@ -56,5 +58,13 @@ public class UserHouseshare {
 
     public void setPoints(int points) {
         this.points = points;
+    }
+
+    public boolean isManager() {
+        return isManager;
+    }
+
+    public void setManager(boolean manager) {
+        isManager = manager;
     }
 }

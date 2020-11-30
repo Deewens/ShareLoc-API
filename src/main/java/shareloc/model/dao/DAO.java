@@ -1,5 +1,6 @@
 package shareloc.model.dao;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContextType;
@@ -21,7 +22,11 @@ public abstract class DAO<T> {
 
     @Transactional
     public T create(T entity) {
-        em.persist(entity);
+        try {
+            em.persist(entity);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return entity;
     }

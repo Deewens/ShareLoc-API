@@ -13,6 +13,10 @@ public class Houseshare {
 
     public Houseshare() {}
 
+    public Houseshare(String name) {
+        this.name = name;
+    }
+
     public Houseshare(int houseshareId, String name) {
         this.houseshareId = houseshareId;
         this.name = name;
