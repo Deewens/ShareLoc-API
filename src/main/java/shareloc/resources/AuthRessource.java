@@ -5,9 +5,11 @@ import shareloc.model.dao.UserDAO;
 import shareloc.model.ejb.User;
 import shareloc.security.JWTokenUtility;
 import shareloc.security.SignInNeeded;
+import shareloc.utils.ErrorCode;
+import shareloc.utils.ParamError;
+import shareloc.utils.ParamErrorResponse;
 
 import javax.inject.Inject;
-import javax.validation.constraints.NotEmpty;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.HashMap;
@@ -16,49 +18,63 @@ import java.util.Optional;
 
 @Path("/")
 public class AuthRessource {
+    @Context
+    UriInfo uriInfo;
     @Inject
     private AuthManager authManager;
     @Inject
-    private UserDAO userDAO = new UserDAO();
+    private UserDAO userDAO;
 
     @POST
     @Path("/login")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response login(@NotEmpty(message = "L'adresse email doit être saisi") @QueryParam("email") String email,
-                          @NotEmpty(message = "Le mot de passe doit être saisi") @QueryParam("password") String password) {
+    public Response login(@FormParam("email") String email,
+                          @FormParam("password") String password) {
 
-        Optional<User> userOptional = authManager.login(email, password);
+        List<ParamError> errors = authManager.checkLoginFields(email, password);
 
-        if(userOptional.isEmpty()) {
-            return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+        if (errors.isEmpty()) {
+            Optional<User> user = userDAO.findByEmail(email);
+            if (user.isEmpty()) {
+                errors.add(new ParamError(ErrorCode.NOT_FOUND, "email", email, "This email address does not exist."));
+            } else {
+                if (!password.equals(user.get().getPassword())) {
+                    errors.add(new ParamError(ErrorCode.NOT_MATCH, "password", "The provided password don't match."));
+                } else {
+                    HashMap<String, Object> data = new HashMap<>();
+                    data.put("token", JWTokenUtility.buildJWT(user.get().getPseudo()));
+                    data.put("user", user.get());
+
+                    return Response.ok().entity(data).build();
+                }
+            }
+
+            ParamErrorResponse paramErrorResponse = new ParamErrorResponse("link", "Unauthorized error", errors);
+            return Response.status(Response.Status.UNAUTHORIZED).entity(paramErrorResponse).build();
         }
 
-        User user = userOptional.get();
-        HashMap<String, Object> data = new HashMap<>();
-        data.put("token", JWTokenUtility.buildJWT(user.getPseudo()));
-        data.put("user", user);
-
-        return Response.ok().entity(data).build();
+        ParamErrorResponse paramErrorResponse = new ParamErrorResponse("link", "Validation errors", errors);
+        return Response.status(422).entity(paramErrorResponse).build();
     }
 
     @POST
-    @Path("/register")
+    @Path("/signup")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response register(@QueryParam("email") String email, @QueryParam("pseudo") String pseudo,
-                             @QueryParam("password") String password, @QueryParam("firstname") String firstname,
-                             @QueryParam("lastname") String lastname) {
-        List<HashMap<String, String>> errorMsgs = authManager.register(email, pseudo, password, firstname, lastname);
+    public Response register(@FormParam("email") String email,
+                             @FormParam("pseudo") String pseudo,
+                             @FormParam("password") String password,
+                             @FormParam("firstname") String firstname,
+                             @FormParam("lastname") String lastname) {
 
-        if (errorMsgs.isEmpty()) { // Si la liste est vide, il n'y a pas eu d'erreur
-            HashMap<String, String> success = new HashMap<>();
-            success.put("title", "Inscription réussie");
-            success.put("message", "L'utilisateur a été ajouté en base de données.");
-            return Response.ok().entity(success).build();
+        List<ParamError> errors = authManager.checkSignupFields(email, pseudo, password, firstname, lastname);
+
+        if (errors.isEmpty()) { // Si la liste est vide, il n'y a pas eu d'erreur
+            User user = userDAO.create(new User(pseudo, email, password, firstname, lastname));
+            return Response.created(uriInfo.getAbsolutePath()).entity(user).build();
         } else {
-            HashMap<String, List<HashMap<String, String>>> errors = new HashMap<>();
-            errors.put("errors", errorMsgs);
+            ParamErrorResponse paramErrorResponse = new ParamErrorResponse("link", "Validation errors", errors);
 
-            return Response.status(422).entity(errors).build();
+            return Response.status(422).entity(paramErrorResponse).build();
         }
     }
 

@@ -1,6 +1,8 @@
 package shareloc.model.ejb;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "user")
@@ -9,14 +11,19 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private int userId;
+
     @Column(name = "pseudo")
     private String pseudo;
+
     @Column(name = "email")
     private String email;
+
     @Column(name = "password")
     private String password;
+
     @Column(name = "firstname")
     private String firstname;
+
     @Column(name = "lastname")
     private String lastname;
 
