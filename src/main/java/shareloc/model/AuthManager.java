@@ -2,195 +2,139 @@ package shareloc.model;
 
 import shareloc.model.dao.UserDAO;
 import shareloc.model.ejb.User;
+import shareloc.utils.ErrorCode;
+import shareloc.utils.ParamError;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
 public class AuthManager {
-    private static final String CODE_FIELD_ALREADY_EXIST = "FIELD_ALREADY_EXIST";
-    private static final String CODE_BAD_FORMAT = "BAD_FORMAT";
-    private static final String CODE_EMPTY_FIELD = "EMPTY_FIELD";
-    private static final String CODE_TOO_LONG_FIELD = "TOO_LONG_FIELD";
-    private static final String CODE_TOO_SHORT_FIELD = "TOO_SHORT_FIELD";
-
-    @SuppressWarnings("FieldMayBeFinal")
     @Inject
-    private UserDAO userDAO = new UserDAO();
+    private UserDAO userDAO;
 
-    public Optional<User> login(String email, String password) {
-        Optional<User> user = userDAO.findByEmail(email);
+    public List<ParamError> checkLoginFields(String email, String password) {
+        List<ParamError> errors = new ArrayList<>();
 
-        if(user.isPresent() && password.equals(user.get().getPassword())) {
-            return user;
+        if (email == null || email.isBlank()) {
+            errors.add(new ParamError(ErrorCode.PARAM_EMPTY, "email", email, "Email field is empty."));
+        } else if (!email.matches("([^.@]+)(\\.[^.@]+)*@([^.@]+\\.)+([^.@]+)")) {
+            errors.add(new ParamError(ErrorCode.BAD_FORMAT, "email", email, "You must use a valid email address (example@domain.fr)"));
         }
 
-        return Optional.empty();
-    }
-
-    public List<HashMap<String, String>> register(String email, String pseudo, String password, String firstname, String lastname) {
-        List<HashMap<String, String>> errors = new ArrayList<>();
-
-        errors.addAll(checkEmail(email));
-        errors.addAll(checkPseudo(pseudo));
-        errors.addAll(checkPassword(password));
-        errors.addAll(checkFirstname(firstname));
-        errors.addAll(checkLastname(lastname));
-
-        if (errors.isEmpty()) {
-            userDAO.create(new User(pseudo, email, password, firstname, lastname));
+        if (password == null || password.isBlank()) {
+            errors.add(new ParamError(ErrorCode.PARAM_EMPTY, "password", email, "Password field is empty."));
         }
 
         return errors;
     }
 
-    private List<HashMap<String, String>> checkEmail(String email) {
-        List<HashMap<String, String>> errors = new ArrayList<>();
+    public List<ParamError> checkSignupFields(String email, String pseudo, String password, String firstname, String lastname) {
+        List<ParamError> errors = new ArrayList<>();
+
+        ParamError emailError = checkEmail(email);
+        if (emailError != null)
+            errors.add(emailError);
+
+        ParamError pseudoError = checkPseudo(pseudo);
+        if (pseudoError != null)
+            errors.add(pseudoError);
+
+        ParamError passwordError = checkPassword(password);
+        if (passwordError != null)
+            errors.add(passwordError);
+
+        ParamError firstnameError = checkFirstname(firstname);
+        if (firstnameError != null)
+            errors.add(firstnameError);
+
+        ParamError lastnameError = checkLastname(lastname);
+        if (lastnameError != null)
+            errors.add(lastnameError);
+
+        return errors;
+    }
+
+    private ParamError checkEmail(String email) {
+        ParamError error = null;
 
         if (email != null && !email.isEmpty()) {
             if (email.matches("([^.@]+)(\\.[^.@]+)*@([^.@]+\\.)+([^.@]+)")) {
                 Optional<User> user = userDAO.findByEmail(email);
                 if(user.isPresent()) {
-                    HashMap<String, String> error = new HashMap<>();
-                    error.put("code", CODE_FIELD_ALREADY_EXIST);
-                    error.put("field", "email");
-                    error.put("title", "L'adresse email existe déjà dans la base de données.");
-                    error.put("message", "Essayez de choisir une autre adresse email qui n'est pas déjà utilisé.");
-
-                    errors.add(error);
+                    error = new ParamError(ErrorCode.ALREADY_EXIST, "email", email, "Email already exist.");
                 }
             } else {
-                HashMap<String, String> error = new HashMap<>();
-                error.put("code", CODE_BAD_FORMAT);
-                error.put("field", "email");
-                error.put("title", "L'adresse email n'est pas au bon format.");
-                error.put("message", "Vous devez entrer un email au format valide (exemple@domaine.fr)");
-                errors.add(error);
+                error = new ParamError(ErrorCode.BAD_FORMAT, "email", email, "You must use a valid email address (example@domain.fr)");
             }
         } else {
-            HashMap<String, String> error = new HashMap<>();
-            error.put("code", CODE_EMPTY_FIELD);
-            error.put("field", "email");
-            error.put("title", "Le champ email est vide.");
-            error.put("message", "L'adresse email est obligatoire.");
-            errors.add(error);
+            error = new ParamError(ErrorCode.PARAM_EMPTY, "email", "Email address must not be empty.");
         }
 
-        return errors;
+        return error;
     }
 
-    private List<HashMap<String, String>> checkPseudo(String pseudo) {
-        List<HashMap<String, String>> errors = new ArrayList<>();
+    private ParamError checkPseudo(String pseudo) {
+        ParamError error = null;
 
         if (pseudo != null && !pseudo.isEmpty()) {
             if (pseudo.length() > 50) {
-                HashMap<String, String> error = new HashMap<>();
-                error.put("code", CODE_TOO_LONG_FIELD);
-                error.put("field", "pseudo");
-                error.put("title", "Le pseudo est trop long.");
-                error.put("message", "Votre pseudo ne peut pas faire plus de 50 caractères.");
-
-                errors.add(error);
+                error = new ParamError(ErrorCode.PARAM_TOO_LONG, "pseudo", pseudo, "Your pseudo can't be more than 50 characters.");
             } else {
                 if (userDAO.findByPseudo(pseudo).isPresent()) {
-                    HashMap<String, String> error = new HashMap<>();
-                    error.put("code", CODE_FIELD_ALREADY_EXIST);
-                    error.put("field", "pseudo");
-                    error.put("title", "Le pseudo " + pseudo + " existe déjà dans la base de données.");
-                    error.put("message", "Essayez de choisir un pseudo qui n'est pas déjà utilisé.");
-
-                    errors.add(error);
+                    error = new ParamError(ErrorCode.ALREADY_EXIST, "pseudo", pseudo, "This pseudo is already used.");
                 }
             }
         } else {
-            HashMap<String, String> error = new HashMap<>();
-            error.put("code", CODE_EMPTY_FIELD);
-            error.put("field", "pseudo");
-            error.put("title", "Le champ pseudo est vide");
-            error.put("message", "Le pseudo est obligatoire.");
-            errors.add(error);
+            error = new ParamError(ErrorCode.PARAM_EMPTY, "pseudo", "Pseudo must not be empty.");
         }
 
-        return errors;
+        return error;
     }
 
-    private List<HashMap<String, String>> checkPassword(String password) {
-        List<HashMap<String, String>> errors = new ArrayList<>();
+    private ParamError checkPassword(String password) {
+        ParamError error = null;
 
         if (password != null && !password.isEmpty()) {
             if (password.length() < 8) {
-                HashMap<String, String> error = new HashMap<>();
-                error.put("code", CODE_TOO_SHORT_FIELD);
-                error.put("field", "password");
-                error.put("title", "Le mot de passe est trop court.");
-                error.put("message", "Votre mot de passe doit faire au minimum 8 caractères.");
-
-                errors.add(error);
+                error = new ParamError(ErrorCode.PARAM_TOO_SHORT, "password", "The password must have 8 characters minimum.");
             }
         } else {
-            HashMap<String, String> error = new HashMap<>();
-            error.put("code", CODE_EMPTY_FIELD);
-            error.put("field", "password");
-            error.put("title", "Le champ est vide");
-            error.put("message", "Le mot de passe est obligatoire.");
 
-            errors.add(error);
+            error = new ParamError(ErrorCode.PARAM_EMPTY, "password", "The password field must not be empty.");
         }
 
-        return errors;
+        return error;
     }
 
-    private List<HashMap<String, String>> checkFirstname(String firstname) {
-        List<HashMap<String, String>> errors = new ArrayList<>();
+    private ParamError checkFirstname(String firstname) {
+        ParamError error = null;
 
         if (firstname != null && !firstname.isEmpty()) {
             if (firstname.length() > 50) {
-                HashMap<String, String> error = new HashMap<>();
-                error.put("code", CODE_TOO_LONG_FIELD);
-                error.put("field", "firstname");
-                error.put("title", "Le prénom est trop long");
-                error.put("message", "Votre prénom doit avoir un maximum de 50 caractères.");
-
-                errors.add(error);
+                error = new ParamError(ErrorCode.PARAM_TOO_LONG, "firstname", firstname, "Firstname must not exceed 50 characters.");
             }
         } else {
-            HashMap<String, String> error = new HashMap<>();
-            error.put("code", CODE_EMPTY_FIELD);
-            error.put("field", "firstname");
-            error.put("title", "Le champ est vide");
-            error.put("message", "Le prénom est obligatoire.");
-
-            errors.add(error);
+            error = new ParamError(ErrorCode.PARAM_EMPTY, "firstname", "Firstname must not be empty.");
         }
 
-        return errors;
+        return error;
     }
 
-    private List<HashMap<String, String>> checkLastname(String lastname) {
-        List<HashMap<String, String>> errors = new ArrayList<>();
+    private ParamError checkLastname(String lastname) {
+        ParamError error = null;
 
         if (lastname != null && !lastname.isEmpty()) {
             if (lastname.length() > 50) {
-                HashMap<String, String> error = new HashMap<>();
-                error.put("code", CODE_TOO_LONG_FIELD);
-                error.put("field", "lastname");
-                error.put("title", "Le nom est trop long");
-                error.put("message", "Votre nom doit avoir un maximum de 50 caractères.");
+                error = new ParamError(ErrorCode.PARAM_TOO_LONG, "lastname", lastname, "Lastname must not exceed 50 characters.");
 
-                errors.add(error);
             }
         } else {
-            HashMap<String, String> error = new HashMap<>();
-            error.put("code", CODE_EMPTY_FIELD);
-            error.put("field", "lastname");
-            error.put("title", "Le champ est vide");
-            error.put("message", "Le nom est obligatoire.");
+            error = new ParamError(ErrorCode.PARAM_EMPTY, "lastname", "Lastname must not be empty.");
 
-            errors.add(error);
         }
 
-        return errors;
+        return error;
     }
 }
