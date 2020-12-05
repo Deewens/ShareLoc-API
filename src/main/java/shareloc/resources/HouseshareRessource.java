@@ -1,62 +1,123 @@
 package shareloc.resources;
 
-import shareloc.model.HouseshareManager;
 import shareloc.model.dao.HouseshareDAO;
 import shareloc.model.dao.UserDAO;
-import shareloc.model.dao.UserHouseshareDAO;
 import shareloc.model.ejb.Houseshare;
 import shareloc.model.ejb.User;
-import shareloc.model.ejb.UserHouseshare;
 import shareloc.security.SignInNeeded;
-import shareloc.utils.ErrorCode;
-import shareloc.utils.ParamError;
-import shareloc.utils.ParamErrorResponse;
+import shareloc.utils.*;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import javax.ws.rs.core.*;
+import java.util.*;
 
 @SignInNeeded
-@Path("/houseshare")
+@Path("/houseshares")
 public class HouseshareRessource {
     @Context
     UriInfo uriInfo;
-
-    @Inject
-    HouseshareManager houseshareManager;
+    @Context
+    SecurityContext securityContext;
 
     @Inject
     private HouseshareDAO houseshareDAO;
-
-    @Inject
-    private UserHouseshareDAO userHouseshareDAO;
-
     @Inject
     private UserDAO userDAO;
 
-    @POST
+    // Cherche la liste des co-locations de l'utilisateur
+    @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createHouseshare(@FormParam("name") String name, @DefaultValue("0") @HeaderParam("user_id") int userId) {
-        List<ParamError> errors = houseshareManager.checkCreateHouseshareFields(name, userId);
+    public Response getHouseshare() {
+        Optional<User> user = userDAO.findByPseudo(securityContext.getUserPrincipal().getName());
 
-        if (errors.isEmpty()) { // Si la liste est vide, il n'y a pas eu d'erreur
-            Optional<User> user = userDAO.findById(userId);
-            if(user.isEmpty()) {
-                errors.add(new ParamError(ErrorCode.NOT_FOUND, "user_id", Integer.toString(userId), "User not found with the given ID."));
-            } else {
-                Houseshare houseshare = houseshareDAO.create(new Houseshare(name));
-                userHouseshareDAO.create(new UserHouseshare(user.get(), houseshare, 0, true));
+        if (user.isPresent()) {
+            List<Houseshare> houseshare = houseshareDAO.findByUser(user.get());
+            return Response.ok(houseshare).build();
+        }
+
+        return Response.status(Response.Status.NOT_FOUND).build();
+
+    }
+
+    // Cherche une co-location par son ID si l'utilsateur est dedans
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getHouseshare(@PathParam("id") int id) {
+        Optional<User> user = userDAO.findByPseudo(securityContext.getUserPrincipal().getName());
+        Optional<Houseshare> houseshare = houseshareDAO.findById(id);
+
+        if (user.isPresent() && houseshare.isPresent()) {
+            if (UserRight.isUserIntoHouseshare(user.get(), houseshare.get()))
+            {
+                return Response.ok(houseshare.get()).build();
+            }
+        }
+
+        return Response.status(Response.Status.NOT_FOUND).build();
+    }
+
+    @PATCH
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateHouseshare(@PathParam("id") int id, @NotNull Houseshare obj) {
+        Optional<User> user = userDAO.findByPseudo(securityContext.getUserPrincipal().getName());
+        Optional<Houseshare> houseshare = houseshareDAO.findById(id);
+
+        String name = obj.getName();
+        if (user.isPresent() && houseshare.isPresent()) {
+            if (UserRight.isUserManager(user.get(), houseshare.get())) {
+                List<ParamError> errors = new ArrayList<>();
+
+                if (name == null || name.isBlank()) {
+                    errors.add(new ParamError(ErrorCode.PARAM_EMPTY, "name", "Name must not be empty."));
+                    ParamErrorResponse errorResponse = new ParamErrorResponse("link", "Validation errors", errors);
+                    return Response.status(422).entity(errorResponse).build();
+                } else {
+                    houseshare.get().setName(obj.getName());
+                    Houseshare response = houseshareDAO.update(houseshare.get());
+                    if (response == null) {
+                        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+                    }
+                    return Response.ok(houseshare).build();
+                }
+            }
+        }
+        return Response.status(Response.Status.NOT_FOUND).build(); // Renvoie NOT_FOUND par sécurité, de sorte à ce que l'utilisateur ne sache pas si l'houseshare existe alors qu'il n'a pas les droits dessus
+    }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createHouseshare(@NotNull Houseshare obj) {
+        String name = obj.getName();
+        List<ParamError> errors = new ArrayList<>();
+        if (name != null && !name.isBlank()) {
+            if (houseshareDAO.findByName(name).isPresent()) {
+                errors.add(new ParamError(ErrorCode.ALREADY_EXIST, "name", name, "Name already exist."));
+            }
+        } else {
+            errors.add(new ParamError(ErrorCode.PARAM_EMPTY, "name", name, "Name must not be empty."));
+        }
+
+        if(errors.isEmpty()) {
+            Optional<User> user = userDAO.findByPseudo(securityContext.getUserPrincipal().getName());
+
+            if (user.isPresent()) {
+                List<User> userSet = new ArrayList<>();
+                userSet.add(user.get());
+                Houseshare houseshare = houseshareDAO.create(new Houseshare(name, user.get(), userSet));
 
                 return Response.created(uriInfo.getAbsolutePath()).entity(houseshare).build();
+            } else {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
             }
 
         }
+
         ParamErrorResponse errorResponse = new ParamErrorResponse("link", "Validation errors", errors);
         return Response.status(422).entity(errorResponse).build();
     }

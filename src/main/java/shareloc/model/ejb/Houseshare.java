@@ -1,25 +1,48 @@
 package shareloc.model.ejb;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
-@Table(name = "houseshare")
-public class Houseshare {
+public class Houseshare implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "houseshare_id")
     private int houseshareId;
+    @Column(nullable = false)
     private String name;
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private User manager; // Utilisateur qui est admin de cette co-location
+    @ManyToMany(targetEntity = User.class, fetch = FetchType.EAGER)
+    private List<User> users = new ArrayList<User>(); // Liste des users membre de la colocation
+    @OneToMany(targetEntity = Service.class)
+    private Set<Service> houseshareServices = new HashSet<Service>(); // Liste des services d'une co-location
 
     public Houseshare() {}
 
-    public Houseshare(String name) {
-        this.name = name;
-    }
-
-    public Houseshare(int houseshareId, String name) {
+    public Houseshare(int houseshareId, String name, User manager, List<User> users, Set<Service> houseshareServices) {
         this.houseshareId = houseshareId;
         this.name = name;
+        this.manager = manager;
+        this.users = users;
+        this.houseshareServices = houseshareServices;
+    }
+
+    public Houseshare(String name, User manager, List<User> users, Set<Service> houseshareServices) {
+        this.name = name;
+        this.manager = manager;
+        this.users = users;
+        this.houseshareServices = houseshareServices;
+    }
+
+    public Houseshare(String name, User manager, List<User> users) {
+        this.name = name;
+        this.manager = manager;
+        this.users = users;
     }
 
     public int getHouseshareId() {
@@ -36,5 +59,41 @@ public class Houseshare {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public User getManager() {
+        return manager;
+    }
+
+    public void setManager(User manager) {
+        this.manager = manager;
+    }
+
+    public List<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<User> users) {
+        this.users = users;
+    }
+
+    public Set<Service> getHouseshareServices() {
+        return houseshareServices;
+    }
+
+    public void setHouseshareServices(Set<Service> houseshareServices) {
+        this.houseshareServices = houseshareServices;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Houseshare{" +
+                "houseshareId=" + houseshareId +
+                ", name='" + name + '\'' +
+                ", manager=" + manager +
+                ", users=" + users +
+                ", houseshareServices=" + houseshareServices +
+                '}';
     }
 }

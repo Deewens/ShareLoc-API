@@ -14,7 +14,7 @@ import java.util.Optional;
 public abstract class DAO<T> {
     @PersistenceContext(unitName = "MariaDB")
     protected EntityManager em;
-    private Class<T> entityClass;
+    private final Class<T> entityClass;
 
     public DAO(Class<T> entityClass) {
         this.entityClass = entityClass;
@@ -22,18 +22,16 @@ public abstract class DAO<T> {
 
     @Transactional
     public T create(T entity) {
-        try {
-            em.persist(entity);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        em.persist(entity);
 
         return entity;
     }
 
     @Transactional
-    public void update(T entity) {
+    public T update(T entity) {
         em.merge(entity);
+
+        return entity;
     }
 
     public void delete(T entity) {

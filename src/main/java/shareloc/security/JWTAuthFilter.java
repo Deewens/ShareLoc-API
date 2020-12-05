@@ -3,7 +3,10 @@ package shareloc.security;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
+import javax.inject.Inject;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
@@ -17,12 +20,14 @@ import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
+import shareloc.model.dao.UserDAO;
+import shareloc.model.ejb.Houseshare;
+import shareloc.model.ejb.User;
 
 
 @Provider
 @SignInNeeded
 public class JWTAuthFilter implements ContainerRequestFilter {
-
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
 

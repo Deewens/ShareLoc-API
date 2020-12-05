@@ -1,29 +1,32 @@
 package shareloc.model.ejb;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@Table(name = "achieved_service")
-public class AchievedService {
+public class AchievedService implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "achieved_service_id")
     private int achievedServiceId;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "service_id", referencedColumnName = "service_id")
-    private Service service;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "houseshare_id", referencedColumnName = "houseshare_id")
-    private Houseshare houseshare;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "from_user_id", referencedColumnName = "user_id")
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private Service service; // Il peut y avoir un seul service par ligne
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private Houseshare houseshare; // Il peut y avoir un seul houeshare par ligne
+    @ManyToOne
+    @JoinColumn(nullable = false)
     private User from;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "to_user_id", referencedColumnName = "user_id")
+    @ManyToOne
+    @JoinColumn(nullable = false)
     private User to;
+
+    @Column(nullable = false)
     private Date date;
+    @Column(nullable = false)
     private String picture;
+    @Column(nullable = false)
     private boolean valid;
 
     public AchievedService() {}

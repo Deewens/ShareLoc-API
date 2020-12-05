@@ -44,8 +44,10 @@ public class AuthRessource {
                     HashMap<String, Object> data = new HashMap<>();
                     data.put("token", JWTokenUtility.buildJWT(user.get().getPseudo()));
                     data.put("user", user.get());
+                    System.out.println("test");
 
-                    return Response.ok().entity(data).build();
+                    GenericEntity<HashMap<String, Object>> entity = new GenericEntity<>(data) {};
+                    return Response.ok(entity).build();
                 }
             }
 
@@ -89,6 +91,6 @@ public class AuthRessource {
             return Response.ok().entity(userOptional.get()).build();
         }
 
-        return Response.status((Response.Status.NO_CONTENT)).build();
+        return Response.status((Response.Status.NOT_FOUND)).build();
     }
 }

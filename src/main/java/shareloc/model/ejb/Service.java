@@ -1,19 +1,19 @@
 package shareloc.model.ejb;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
-@Table(name = "service")
-public class Service {
+public class Service implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "service_id")
     private int serviceId;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "houseshare_id", referencedColumnName = "houseshare_id")
-    private Houseshare houseshare;
+    @ManyToOne(targetEntity = Houseshare.class)
+    private Houseshare houseshare; // Co-location du service
+    @Column(nullable = false)
     private String title;
     private String description;
+    @Column(nullable = false)
     private int cost;
 
     public Service() {}
@@ -30,8 +30,8 @@ public class Service {
         return serviceId;
     }
 
-    public void setServiceId(int id) {
-        this.serviceId = id;
+    public void setServiceId(int serviceId) {
+        this.serviceId = serviceId;
     }
 
     public Houseshare getHouseshare() {

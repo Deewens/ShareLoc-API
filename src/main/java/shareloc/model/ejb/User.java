@@ -1,31 +1,32 @@
 package shareloc.model.ejb;
 
+import org.eclipse.persistence.annotations.SerializedObject;
+
+import javax.json.bind.annotation.JsonbAnnotation;
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 @Entity
-@Table(name = "user")
-public class User {
+public class User implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
     private int userId;
-
-    @Column(name = "pseudo")
+    @Column(unique = true, nullable = false)
     private String pseudo;
-
-    @Column(name = "email")
+    @Column(unique = true, nullable = false)
     private String email;
-
-    @Column(name = "password")
+    @Column(nullable = false)
     private String password;
-
-    @Column(name = "firstname")
+    @Column(nullable = false)
     private String firstname;
-
-    @Column(name = "lastname")
+    @Column(nullable = false)
     private String lastname;
+
 
     public User() {}
 
