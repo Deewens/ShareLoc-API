@@ -5,7 +5,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 public class Houseshare implements Serializable {
@@ -20,11 +19,11 @@ public class Houseshare implements Serializable {
     @ManyToMany(targetEntity = User.class, fetch = FetchType.EAGER)
     private List<User> users = new ArrayList<User>(); // Liste des users membre de la colocation
     @OneToMany(targetEntity = Service.class)
-    private Set<Service> houseshareServices = new HashSet<Service>(); // Liste des services d'une co-location
+    private List<Service> houseshareServices = new ArrayList<>(); // Liste des services d'une co-location
 
     public Houseshare() {}
 
-    public Houseshare(int houseshareId, String name, User manager, List<User> users, Set<Service> houseshareServices) {
+    public Houseshare(int houseshareId, String name, User manager, List<User> users, List<Service> houseshareServices) {
         this.houseshareId = houseshareId;
         this.name = name;
         this.manager = manager;
@@ -32,7 +31,7 @@ public class Houseshare implements Serializable {
         this.houseshareServices = houseshareServices;
     }
 
-    public Houseshare(String name, User manager, List<User> users, Set<Service> houseshareServices) {
+    public Houseshare(String name, User manager, List<User> users, List<Service> houseshareServices) {
         this.name = name;
         this.manager = manager;
         this.users = users;
@@ -77,11 +76,11 @@ public class Houseshare implements Serializable {
         this.users = users;
     }
 
-    public Set<Service> getHouseshareServices() {
+    public List<Service> getHouseshareServices() {
         return houseshareServices;
     }
 
-    public void setHouseshareServices(Set<Service> houseshareServices) {
+    public void setHouseshareServices(List<Service> houseshareServices) {
         this.houseshareServices = houseshareServices;
     }
 

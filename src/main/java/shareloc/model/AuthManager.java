@@ -24,7 +24,7 @@ public class AuthManager {
         }
 
         if (password == null || password.isBlank()) {
-            errors.add(new ParamError(ErrorCode.PARAM_EMPTY, "password", email, "Password field is empty."));
+            errors.add(new ParamError(ErrorCode.PARAM_EMPTY, "password", "Password field is empty."));
         }
 
         return errors;

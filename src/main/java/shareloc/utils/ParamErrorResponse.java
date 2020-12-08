@@ -7,6 +7,8 @@ public class ParamErrorResponse {
     private String title;
     private List<ParamError> errors;
 
+    public ParamErrorResponse() {}
+
     public ParamErrorResponse(String type, String title, List<ParamError> errors) {
         this.type = type;
         this.title = title;

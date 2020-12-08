@@ -1,8 +1,10 @@
 package shareloc.resources;
 
 import shareloc.model.dao.HouseshareDAO;
+import shareloc.model.dao.ServiceDAO;
 import shareloc.model.dao.UserDAO;
 import shareloc.model.ejb.Houseshare;
+import shareloc.model.ejb.Service;
 import shareloc.model.ejb.User;
 import shareloc.security.SignInNeeded;
 import shareloc.utils.*;
@@ -25,6 +27,8 @@ public class HouseshareRessource {
     private HouseshareDAO houseshareDAO;
     @Inject
     private UserDAO userDAO;
+    @Inject
+    private ServiceDAO serviceDAO;
 
     // Cherche la liste des co-locations de l'utilisateur
     @GET
@@ -59,7 +63,7 @@ public class HouseshareRessource {
         return Response.status(Response.Status.NOT_FOUND).build();
     }
 
-    @PATCH
+    @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -67,23 +71,64 @@ public class HouseshareRessource {
         Optional<User> user = userDAO.findByPseudo(securityContext.getUserPrincipal().getName());
         Optional<Houseshare> houseshare = houseshareDAO.findById(id);
 
-        String name = obj.getName();
         if (user.isPresent() && houseshare.isPresent()) {
-            if (UserRight.isUserManager(user.get(), houseshare.get())) {
-                List<ParamError> errors = new ArrayList<>();
+            List<ParamError> errors = new ArrayList<>();
+            if (obj.getName() == null || obj.getName().isBlank()) {
+                errors.add(new ParamError(ErrorCode.PARAM_EMPTY, "name", "Name must not be empty."));
+            } else {
+                houseshare.get().setName(obj.getName());
+            }
 
-                if (name == null || name.isBlank()) {
-                    errors.add(new ParamError(ErrorCode.PARAM_EMPTY, "name", "Name must not be empty."));
-                    ParamErrorResponse errorResponse = new ParamErrorResponse("link", "Validation errors", errors);
-                    return Response.status(422).entity(errorResponse).build();
+            if (obj.getManager() == null) {
+                errors.add(new ParamError(ErrorCode.PARAM_EMPTY, "manager", "The manager must be provided."));
+            } else {
+                Optional<User> manager = userDAO.findById(obj.getManager().getUserId());
+                if (manager.isEmpty()) {
+                    errors.add(new ParamError(ErrorCode.PARAM_EMPTY, "manager", "The given manager does not exist."));
                 } else {
-                    houseshare.get().setName(obj.getName());
-                    Houseshare response = houseshareDAO.update(houseshare.get());
-                    if (response == null) {
-                        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-                    }
-                    return Response.ok(houseshare).build();
+                    houseshare.get().setManager(manager.get());
                 }
+            }
+
+            if (obj.getUsers().isEmpty()) {
+                errors.add(new ParamError(ErrorCode.BAD_FORMAT, "users", "Users must be a json array of user."));
+            } else {
+                List<User> userList = new ArrayList<>();
+                for (User value : obj.getUsers()) {
+                    Optional<User> us = userDAO.findById(value.getUserId());
+                    if (us.isEmpty()) {
+                        errors.add(new ParamError(ErrorCode.ENTITY_NOT_FOUND, "users", "One of the user given does not exist."));
+                    } else {
+                        userList.add(us.get());
+                    }
+                }
+                houseshare.get().setUsers(userList);
+            }
+
+            if (obj.getHouseshareServices().isEmpty()) {
+                errors.add(new ParamError(ErrorCode.BAD_FORMAT, "houseshareServices", "HouseshareServices must be a json array of service."));
+            } else {
+                List<Service> serviceList = new ArrayList<>();
+                for (Service value : obj.getHouseshareServices()) {
+                    Optional<Service> service = serviceDAO.findById(value.getServiceId());
+                    if (service.isEmpty()) {
+                        errors.add(new ParamError(ErrorCode.ENTITY_NOT_FOUND, "houseshareServices", "One of the service given does not exist."));
+                    } else {
+                        serviceList.add(service.get());
+                    }
+                }
+                houseshare.get().setHouseshareServices(serviceList);
+            }
+
+            if (!errors.isEmpty()) {
+                ParamErrorResponse errorResponse = new ParamErrorResponse("link", "Validation errors", errors);
+                return Response.status(422).entity(errorResponse).build();
+            } else if (UserRight.isUserManager(user.get(), houseshare.get())) {
+                Houseshare response = houseshareDAO.update(obj);
+                if (response == null) {
+                    return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+                }
+                return Response.ok(houseshare).build();
             }
         }
         return Response.status(Response.Status.NOT_FOUND).build(); // Renvoie NOT_FOUND par sécurité, de sorte à ce que l'utilisateur ne sache pas si l'houseshare existe alors qu'il n'a pas les droits dessus

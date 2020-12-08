@@ -1,5 +1,7 @@
 package shareloc.resources;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import shareloc.model.AuthManager;
 import shareloc.model.dao.UserDAO;
 import shareloc.model.ejb.User;
@@ -10,6 +12,9 @@ import shareloc.utils.ParamError;
 import shareloc.utils.ParamErrorResponse;
 
 import javax.inject.Inject;
+import javax.json.JsonObject;
+import javax.json.stream.JsonParsingException;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.HashMap;
@@ -27,24 +32,25 @@ public class AuthRessource {
 
     @POST
     @Path("/login")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response login(@FormParam("email") String email,
-                          @FormParam("password") String password) {
+    public Response login(@NotNull User user) {
+        String email = user.getEmail();
+        String password = user.getPassword();
 
         List<ParamError> errors = authManager.checkLoginFields(email, password);
 
         if (errors.isEmpty()) {
-            Optional<User> user = userDAO.findByEmail(email);
-            if (user.isEmpty()) {
+            Optional<User> userConnected = userDAO.findByEmail(email);
+            if (userConnected.isEmpty()) {
                 errors.add(new ParamError(ErrorCode.NOT_FOUND, "email", email, "This email address does not exist."));
             } else {
-                if (!password.equals(user.get().getPassword())) {
+                if (!password.equals(userConnected.get().getPassword())) {
                     errors.add(new ParamError(ErrorCode.NOT_MATCH, "password", "The provided password don't match."));
                 } else {
                     HashMap<String, Object> data = new HashMap<>();
-                    data.put("token", JWTokenUtility.buildJWT(user.get().getPseudo()));
-                    data.put("user", user.get());
-                    System.out.println("test");
+                    data.put("token", JWTokenUtility.buildJWT(userConnected.get().getPseudo()));
+                    data.put("user", userConnected.get());
 
                     GenericEntity<HashMap<String, Object>> entity = new GenericEntity<>(data) {};
                     return Response.ok(entity).build();
@@ -62,17 +68,18 @@ public class AuthRessource {
     @POST
     @Path("/signup")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response register(@FormParam("email") String email,
-                             @FormParam("pseudo") String pseudo,
-                             @FormParam("password") String password,
-                             @FormParam("firstname") String firstname,
-                             @FormParam("lastname") String lastname) {
+    public Response register(@NotNull User user) {
+        String email = user.getEmail();
+        String pseudo = user.getPseudo();
+        String password = user.getPassword();
+        String firstname = user.getFirstname();
+        String lastname = user.getLastname();
 
         List<ParamError> errors = authManager.checkSignupFields(email, pseudo, password, firstname, lastname);
 
         if (errors.isEmpty()) { // Si la liste est vide, il n'y a pas eu d'erreur
-            User user = userDAO.create(new User(pseudo, email, password, firstname, lastname));
-            return Response.created(uriInfo.getAbsolutePath()).entity(user).build();
+            User userCreated = userDAO.create(new User(pseudo, email, password, firstname, lastname));
+            return Response.created(uriInfo.getAbsolutePath()).entity(userCreated).build();
         } else {
             ParamErrorResponse paramErrorResponse = new ParamErrorResponse("link", "Validation errors", errors);
 

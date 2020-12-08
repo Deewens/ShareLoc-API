@@ -53,10 +53,27 @@
             <artifactId>jose4j</artifactId>
             <version>0.7.2</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.raml.jaxrs/raml-for-jaxrs -->
+        <dependency>
+            <groupId>org.raml.jaxrs</groupId>
+            <artifactId>jaxrs-code-generator</artifactId>
+            <version>3.0.7</version>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.raml.jaxrs</groupId>
+                <artifactId>raml-to-jaxrs-maven-plugin</artifactId>
+                <version>3.0.7</version>
+                <configuration>
+                    <ramlFile>${project.basedir}/src/main/resources/shareloc.raml</ramlFile>
+                    <resourcePackage>features.resources</resourcePackage>
+                    <modelPackage>features.model</modelPackage>
+                    <resourcePackage>features.types</resourcePackage>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
