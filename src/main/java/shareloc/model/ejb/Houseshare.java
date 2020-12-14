@@ -1,30 +1,40 @@
 package shareloc.model.ejb;
 
-import javax.persistence.*;
-import java.io.Serializable;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.groups.Default;
+import shareloc.model.validation.groups.HouseshareConstraints;
+
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
-public class Houseshare implements Serializable {
+public class Houseshare {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int houseshareId;
+
+    @NotBlank(groups = { HouseshareConstraints.PostConstraint.class, Default.class })
     @Column(nullable = false)
     private String name;
+
+    @NotNull
     @ManyToOne
     @JoinColumn(nullable = false)
     private User manager; // Utilisateur qui est admin de cette co-location
+
+    @NotEmpty
     @ManyToMany(targetEntity = User.class, fetch = FetchType.EAGER)
     private List<User> users = new ArrayList<User>(); // Liste des users membre de la colocation
+
     @OneToMany(targetEntity = Service.class)
-    private Set<Service> houseshareServices = new HashSet<Service>(); // Liste des services d'une co-location
+    private List<Service> houseshareServices = new ArrayList<>(); // Liste des services d'une co-location
 
     public Houseshare() {}
 
-    public Houseshare(int houseshareId, String name, User manager, List<User> users, Set<Service> houseshareServices) {
+    public Houseshare(int houseshareId, String name, User manager, List<User> users, List<Service> houseshareServices) {
         this.houseshareId = houseshareId;
         this.name = name;
         this.manager = manager;
@@ -32,7 +42,7 @@ public class Houseshare implements Serializable {
         this.houseshareServices = houseshareServices;
     }
 
-    public Houseshare(String name, User manager, List<User> users, Set<Service> houseshareServices) {
+    public Houseshare(String name, User manager, List<User> users, List<Service> houseshareServices) {
         this.name = name;
         this.manager = manager;
         this.users = users;
@@ -77,11 +87,11 @@ public class Houseshare implements Serializable {
         this.users = users;
     }
 
-    public Set<Service> getHouseshareServices() {
+    public List<Service> getHouseshareServices() {
         return houseshareServices;
     }
 
-    public void setHouseshareServices(Set<Service> houseshareServices) {
+    public void setHouseshareServices(List<Service> houseshareServices) {
         this.houseshareServices = houseshareServices;
     }
 
