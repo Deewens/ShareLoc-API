@@ -1,23 +1,34 @@
 package shareloc.model.ejb;
 
-import javax.persistence.*;
-import java.io.Serializable;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.groups.Default;
+import shareloc.model.validation.groups.HouseshareConstraints;
+
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 @Entity
-public class Houseshare implements Serializable {
+public class Houseshare {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int houseshareId;
+
+    @NotBlank(groups = { HouseshareConstraints.PostConstraint.class, Default.class })
     @Column(nullable = false)
     private String name;
+
+    @NotNull
     @ManyToOne
     @JoinColumn(nullable = false)
     private User manager; // Utilisateur qui est admin de cette co-location
+
+    @NotEmpty
     @ManyToMany(targetEntity = User.class, fetch = FetchType.EAGER)
     private List<User> users = new ArrayList<User>(); // Liste des users membre de la colocation
+
     @OneToMany(targetEntity = Service.class)
     private List<Service> houseshareServices = new ArrayList<>(); // Liste des services d'une co-location
 

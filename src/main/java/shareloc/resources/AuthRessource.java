@@ -1,32 +1,24 @@
 package shareloc.resources;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import shareloc.model.AuthManager;
+import jakarta.inject.Inject;
+import jakarta.validation.Valid;
+import jakarta.validation.groups.ConvertGroup;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.*;
 import shareloc.model.dao.UserDAO;
 import shareloc.model.ejb.User;
+import shareloc.model.validation.groups.SigningConstraint;
+import shareloc.model.validation.ValidationErrorResponse;
 import shareloc.security.JWTokenUtility;
 import shareloc.security.SignInNeeded;
 import shareloc.utils.ErrorCode;
-import shareloc.utils.ParamError;
-import shareloc.utils.ParamErrorResponse;
 
-import javax.inject.Inject;
-import javax.json.JsonObject;
-import javax.json.stream.JsonParsingException;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.*;
-import javax.ws.rs.core.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Path("/")
 public class AuthRessource {
     @Context
     UriInfo uriInfo;
-    @Inject
-    private AuthManager authManager;
     @Inject
     private UserDAO userDAO;
 
@@ -34,56 +26,69 @@ public class AuthRessource {
     @Path("/login")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response login(@NotNull User user) {
+    public Response login(@Valid @ConvertGroup(to = SigningConstraint.class) User user) {
         String email = user.getEmail();
-        String password = user.getPassword();
 
-        List<ParamError> errors = authManager.checkLoginFields(email, password);
+        Optional<User> userOptional = userDAO.findByEmail(email);
+        if (userOptional.isPresent()) {
+            HashMap<String, Object> data = new HashMap<>();
+            data.put("token", JWTokenUtility.buildJWT(userOptional.get().getPseudo()));
+            userOptional.get().setPassword(null);
+            data.put("user", userOptional.get());
 
-        if (errors.isEmpty()) {
-            Optional<User> userConnected = userDAO.findByEmail(email);
-            if (userConnected.isEmpty()) {
-                errors.add(new ParamError(ErrorCode.NOT_FOUND, "email", email, "This email address does not exist."));
-            } else {
-                if (!password.equals(userConnected.get().getPassword())) {
-                    errors.add(new ParamError(ErrorCode.NOT_MATCH, "password", "The provided password don't match."));
-                } else {
-                    HashMap<String, Object> data = new HashMap<>();
-                    data.put("token", JWTokenUtility.buildJWT(userConnected.get().getPseudo()));
-                    data.put("user", userConnected.get());
-
-                    GenericEntity<HashMap<String, Object>> entity = new GenericEntity<>(data) {};
-                    return Response.ok(entity).build();
-                }
-            }
-
-            ParamErrorResponse paramErrorResponse = new ParamErrorResponse("link", "Unauthorized error", errors);
-            return Response.status(Response.Status.UNAUTHORIZED).entity(paramErrorResponse).build();
+            GenericEntity<HashMap<String, Object>> entity = new GenericEntity<>(data) {};
+            return Response.ok(entity).build();
         }
 
-        ParamErrorResponse paramErrorResponse = new ParamErrorResponse("link", "Validation errors", errors);
-        return Response.status(422).entity(paramErrorResponse).build();
+        Map<String, String> errors = new HashMap<>();
+        errors.put("type", "link");
+        errors.put("title", "Credential errors");
+        errors.put("code", ErrorCode.UNAUTHORIZED_ERROR);
+        errors.put("message", "Email or password does not match with an existing user.");
+        return Response.status(Response.Status.UNAUTHORIZED).entity(errors).build();
     }
 
     @POST
     @Path("/signup")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response register(@NotNull User user) {
+    public Response register(@Valid User user) {
         String email = user.getEmail();
         String pseudo = user.getPseudo();
         String password = user.getPassword();
         String firstname = user.getFirstname();
         String lastname = user.getLastname();
 
-        List<ParamError> errors = authManager.checkSignupFields(email, pseudo, password, firstname, lastname);
+        Optional<User> checkEmail = userDAO.findByEmail(email);
+        Optional<User> checkPseudo = userDAO.findByPseudo(pseudo);
 
-        if (errors.isEmpty()) { // Si la liste est vide, il n'y a pas eu d'erreur
-            User userCreated = userDAO.create(new User(pseudo, email, password, firstname, lastname));
-            return Response.created(uriInfo.getAbsolutePath()).entity(userCreated).build();
+        List<ValidationErrorResponse.ValidationError> errors = new ArrayList<>();
+
+        if (checkEmail.isPresent()) {
+            errors.add(new ValidationErrorResponse.ValidationError(
+                    ErrorCode.ALREADY_EXIST,
+                    "email",
+                    email,
+                    "email already exist in database")
+            );
+        }
+
+        if (checkPseudo.isPresent()) {
+            errors.add(new ValidationErrorResponse.ValidationError(
+                    ErrorCode.ALREADY_EXIST,
+                    "pseudo",
+                    pseudo,
+                    "pseudo already exist in database")
+            );
+        }
+
+        if (!errors.isEmpty()) {
+            ValidationErrorResponse response = new ValidationErrorResponse("url", "Validation error", errors);
+            return Response.status(422).entity(response).build();
         } else {
-            ParamErrorResponse paramErrorResponse = new ParamErrorResponse("link", "Validation errors", errors);
-
-            return Response.status(422).entity(paramErrorResponse).build();
+            User userCreated = userDAO.create(new User(pseudo, email, password, firstname, lastname));
+            userCreated.setPassword(null);
+            return Response.created(uriInfo.getAbsolutePath()).entity(userCreated).build();
         }
     }
 
@@ -95,9 +100,10 @@ public class AuthRessource {
         Optional<User> userOptional = userDAO.findByPseudo(security.getUserPrincipal().getName());
 
         if (userOptional.isPresent()) {
+            userOptional.get().setPassword(null);
             return Response.ok().entity(userOptional.get()).build();
         }
 
-        return Response.status((Response.Status.NOT_FOUND)).build();
+        return Response.status(Response.Status.NOT_FOUND).build();
     }
 }

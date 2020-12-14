@@ -1,29 +1,40 @@
 package shareloc.model.ejb;
 
-import org.eclipse.persistence.annotations.SerializedObject;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import jakarta.validation.groups.Default;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import shareloc.model.validation.groups.HouseshareConstraints;
+import shareloc.model.validation.groups.SigningConstraint;
 
-import javax.json.bind.annotation.JsonbAnnotation;
-import javax.persistence.*;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.Objects;
 
 @Entity
-public class User implements Serializable {
-    private static final long serialVersionUID = 1L;
-
+public class User {
+    @NotNull(groups = { HouseshareConstraints.PostUsersConstraint.class })
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int userId;
+    private Integer userId;
+
+    @NotBlank
     @Column(unique = true, nullable = false)
     private String pseudo;
+
+    @NotBlank(groups = { SigningConstraint.class, Default.class })
+    @Email(groups = { SigningConstraint.class, Default.class })
     @Column(unique = true, nullable = false)
     private String email;
+
+    @Size(min = 8)
+    @NotBlank(groups = { SigningConstraint.class, Default.class })
     @Column(nullable = false)
     private String password;
+
+    @NotEmpty
     @Column(nullable = false)
     private String firstname;
+
+    @NotEmpty
     @Column(nullable = false)
     private String lastname;
 
@@ -71,12 +82,12 @@ public class User implements Serializable {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public String getFirstname() {
@@ -93,5 +104,18 @@ public class User implements Serializable {
 
     public void setLastname(String lastname) {
         this.lastname = lastname;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return userId.equals(user.userId) && pseudo.equals(user.pseudo) && email.equals(user.email) && password.equals(user.password) && firstname.equals(user.firstname) && lastname.equals(user.lastname);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userId, pseudo, email, password, firstname, lastname);
     }
 }

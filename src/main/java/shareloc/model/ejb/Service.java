@@ -1,10 +1,11 @@
 package shareloc.model.ejb;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+
 import java.io.Serializable;
 
 @Entity
-public class Service implements Serializable {
+public class Service {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int serviceId;
