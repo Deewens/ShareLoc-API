@@ -34,6 +34,7 @@ public abstract class DAO<T> {
         return entity;
     }
 
+    @Transactional
     public void delete(T entity) {
         em.remove(em.merge(entity));
     }

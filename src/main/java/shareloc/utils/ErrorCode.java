@@ -14,9 +14,9 @@ public class ErrorCode {
     public static final String ENTITY_NOT_FOUND = "ENTITY_NOT_FOUND";
 
     // Field
-    public static final String EMPTY = "EMPTY";
-    public static final String BLANK = "BLANK";
-    public static final String NULL = "NULL_VALUE";
-    public static final String TOO_LONG = "TOO_LONG";
-    public static final String TOO_SHORT = "TOO_SHORT";
+    public static final String EMPTY = "FIELD_EMPTY";
+    public static final String BLANK = "FIELD_BLANK";
+    public static final String NULL = "FIELD_NULL";
+    public static final String TOO_LONG = "FIELD_TOO_LONG";
+    public static final String TOO_SHORT = "FIELD_TOO_SHORT";
 }
