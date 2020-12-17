@@ -16,7 +16,7 @@ public class Houseshare {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int houseshareId;
 
-    @NotBlank(groups = { HouseshareConstraints.PostConstraint.class, Default.class })
+    @NotBlank(groups = { HouseshareConstraints.PostConstraint.class, HouseshareConstraints.PutConstraint.class, Default.class })
     @Column(nullable = false)
     private String name;
 
