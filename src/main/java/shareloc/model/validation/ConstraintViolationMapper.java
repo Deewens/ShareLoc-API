@@ -11,6 +11,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
+import shareloc.model.validation.customconstraints.Date;
 import shareloc.utils.ErrorCode;
 
 import java.lang.annotation.Annotation;
@@ -83,6 +84,10 @@ public class ConstraintViolationMapper implements ExceptionMapper<ConstraintViol
 
         if (annotation instanceof NotNull) {
             return ErrorCode.NULL;
+        }
+
+        if (annotation instanceof Date) {
+            return ErrorCode.DATE_ERROR;
         }
 
         return ErrorCode.UNDEFINED_ERROR;

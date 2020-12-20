@@ -29,24 +29,13 @@ public class Houseshare {
     @ManyToMany(targetEntity = User.class, fetch = FetchType.EAGER)
     private List<User> users = new ArrayList<User>(); // Liste des users membre de la colocation
 
-    @OneToMany(targetEntity = Service.class)
-    private List<Service> houseshareServices = new ArrayList<>(); // Liste des services d'une co-location
-
     public Houseshare() {}
 
-    public Houseshare(int houseshareId, String name, User manager, List<User> users, List<Service> houseshareServices) {
+    public Houseshare(int houseshareId, String name, User manager, List<User> users) {
         this.houseshareId = houseshareId;
         this.name = name;
         this.manager = manager;
         this.users = users;
-        this.houseshareServices = houseshareServices;
-    }
-
-    public Houseshare(String name, User manager, List<User> users, List<Service> houseshareServices) {
-        this.name = name;
-        this.manager = manager;
-        this.users = users;
-        this.houseshareServices = houseshareServices;
     }
 
     public Houseshare(String name, User manager, List<User> users) {
@@ -87,14 +76,6 @@ public class Houseshare {
         this.users = users;
     }
 
-    public List<Service> getHouseshareServices() {
-        return houseshareServices;
-    }
-
-    public void setHouseshareServices(List<Service> houseshareServices) {
-        this.houseshareServices = houseshareServices;
-    }
-
 
     @Override
     public String toString() {
@@ -103,7 +84,6 @@ public class Houseshare {
                 ", name='" + name + '\'' +
                 ", manager=" + manager +
                 ", users=" + users +
-                ", houseshareServices=" + houseshareServices +
                 '}';
     }
 }

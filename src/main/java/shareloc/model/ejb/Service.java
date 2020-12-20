@@ -1,26 +1,33 @@
 package shareloc.model.ejb;
 
 import jakarta.persistence.*;
-
-import java.io.Serializable;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import shareloc.model.validation.groups.ServiceConstraints;
 
 @Entity
 public class Service {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int serviceId;
+
     @ManyToOne(targetEntity = Houseshare.class)
     private Houseshare houseshare; // Co-location du service
+
+    @NotBlank(groups = { ServiceConstraints.CreateServiceConstraint.class, ServiceConstraints.UpdateServiceConstraint.class })
     @Column(nullable = false)
     private String title;
+
+    @NotNull(groups = { ServiceConstraints.CreateServiceConstraint.class, ServiceConstraints.UpdateServiceConstraint.class })
     private String description;
+
+    @NotNull(groups = { ServiceConstraints.CreateServiceConstraint.class, ServiceConstraints.UpdateServiceConstraint.class })
     @Column(nullable = false)
-    private int cost;
+    private Integer cost;
 
     public Service() {}
 
-    public Service(int serviceId, Houseshare houseshare, String title, String description, int cost) {
-        this.serviceId = serviceId;
+    public Service(Houseshare houseshare, String title, String description, int cost) {
         this.houseshare = houseshare;
         this.title = title;
         this.description = description;

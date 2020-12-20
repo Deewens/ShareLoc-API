@@ -15,6 +15,8 @@ import shareloc.utils.ErrorCode;
 
 import java.util.*;
 
+import static shareloc.utils.CustomResponse.*;
+
 @Path("/")
 public class AuthRessource {
     @Context
@@ -40,12 +42,11 @@ public class AuthRessource {
             return Response.ok(entity).build();
         }
 
-        Map<String, String> errors = new HashMap<>();
-        errors.put("type", "link");
-        errors.put("title", "Credential errors");
-        errors.put("code", ErrorCode.UNAUTHORIZED_ERROR);
-        errors.put("message", "Email or password does not match with an existing user.");
-        return Response.status(Response.Status.UNAUTHORIZED).entity(errors).build();
+        return buildErrorResponse(
+                Response.Status.UNAUTHORIZED,
+                ErrorCode.UNAUTHORIZED_ERROR,
+                "Credential errors",
+                "Email or password does not match with an existing user.");
     }
 
     @POST

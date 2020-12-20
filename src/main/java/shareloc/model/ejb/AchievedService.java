@@ -1,6 +1,10 @@
 package shareloc.model.ejb;
 
 import jakarta.persistence.*;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -10,9 +14,12 @@ public class AchievedService {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int achievedServiceId;
+
+
     @ManyToOne
     @JoinColumn(nullable = false)
     private Service service; // Il peut y avoir un seul service par ligne
+
     @ManyToOne
     @JoinColumn(nullable = false)
     private Houseshare houseshare; // Il peut y avoir un seul houeshare par ligne
@@ -32,8 +39,7 @@ public class AchievedService {
 
     public AchievedService() {}
 
-    public AchievedService(int achievedServiceId, Service service, Houseshare houseshare, User from, User to, Date date, String picture, boolean valid) {
-        this.achievedServiceId = achievedServiceId;
+    public AchievedService(Service service, Houseshare houseshare, User from, User to, Date date, String picture, boolean valid) {
         this.service = service;
         this.houseshare = houseshare;
         this.from = from;
