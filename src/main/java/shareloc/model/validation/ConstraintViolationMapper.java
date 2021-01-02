@@ -4,10 +4,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.ElementKind;
 import jakarta.validation.Path;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
@@ -88,6 +85,10 @@ public class ConstraintViolationMapper implements ExceptionMapper<ConstraintViol
 
         if (annotation instanceof Date) {
             return ErrorCode.DATE_ERROR;
+        }
+
+        if (annotation instanceof Size) {
+            return ErrorCode.TOO_SHORT;
         }
 
         return ErrorCode.UNDEFINED_ERROR;

@@ -33,13 +33,15 @@ public class AuthRessource {
 
         Optional<User> userOptional = userDAO.findByEmail(email);
         if (userOptional.isPresent()) {
-            HashMap<String, Object> data = new HashMap<>();
-            data.put("token", JWTokenUtility.buildJWT(userOptional.get().getPseudo()));
-            userOptional.get().setPassword(null);
-            data.put("user", userOptional.get());
+            if (userOptional.get().getPassword().equals(user.getPassword())) {
+                HashMap<String, Object> data = new HashMap<>();
+                data.put("token", JWTokenUtility.buildJWT(userOptional.get().getPseudo()));
+                userOptional.get().setPassword(null);
+                data.put("user", userOptional.get());
 
-            GenericEntity<HashMap<String, Object>> entity = new GenericEntity<>(data) {};
-            return Response.ok(entity).build();
+                GenericEntity<HashMap<String, Object>> entity = new GenericEntity<>(data) {};
+                return Response.ok(entity).build();
+            }
         }
 
         return buildErrorResponse(
