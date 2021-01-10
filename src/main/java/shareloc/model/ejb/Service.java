@@ -25,13 +25,18 @@ public class Service {
     @Column(nullable = false)
     private Integer cost;
 
+    @NotNull(groups = { ServiceConstraints.CreateServiceConstraint.class, ServiceConstraints.UpdateServiceConstraint.class })
+    @Column(nullable = false)
+    private Integer status;
+
     public Service() {}
 
-    public Service(Houseshare houseshare, String title, String description, int cost) {
+    public Service(Houseshare houseshare, String title, String description, int cost, int status) {
         this.houseshare = houseshare;
         this.title = title;
         this.description = description;
         this.cost = cost;
+        this.status = status;
     }
 
     public int getServiceId() {
@@ -73,4 +78,8 @@ public class Service {
     public void setCost(int cost) {
         this.cost = cost;
     }
+
+    public int getStatus() { return status; }
+
+    public void setStatus(int status) { this.status = status; }
 }

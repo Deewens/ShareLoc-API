@@ -10,12 +10,14 @@ import shareloc.model.dao.HouseshareDAO;
 import shareloc.model.dao.ServiceDAO;
 import shareloc.model.dao.UserDAO;
 import shareloc.model.ejb.Houseshare;
+import shareloc.model.ejb.Message;
 import shareloc.model.ejb.Service;
 import shareloc.model.ejb.User;
 import shareloc.model.validation.groups.ServiceConstraints;
 import shareloc.security.SignInNeeded;
 import shareloc.utils.ErrorCode;
 
+import java.util.List;
 import java.util.Optional;
 
 import static shareloc.utils.CustomResponse.buildErrorResponse;
@@ -91,6 +93,35 @@ public class ServiceRessource {
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
 
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response getServicesByStatus(@NotNull @QueryParam("status") Integer status) {
+        Optional<User> loggedInUser = userDAO.findByPseudo(securityContext.getUserPrincipal().getName());
+        Optional<Houseshare> houseshare = houseshareDAO.findById(this.houseshareId);
+
+        if (loggedInUser.isPresent()) {
+            if (houseshare.isEmpty()) {
+                return buildHouseshareNotFoundErrorResponse();
+            }
+
+            if (!houseshare.get().getUsers().contains(loggedInUser.get())) {
+                return buildUserNotInHouseshareErrorResponse();
+            }
+
+            List<Service> services = serviceDAO.findByStatus(houseshare.get(), status);
+
+            if(!services.isEmpty()) {
+                GenericEntity<List<Service>> entity = new GenericEntity<List<Service>>(services) {};
+                return Response.ok().entity(entity).build();
+            }
+
+            return Response.status(Response.Status.NO_CONTENT).build();
+        }
+
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+    }
+
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -107,7 +138,7 @@ public class ServiceRessource {
                 return buildUserNotInHouseshareErrorResponse();
             }
 
-            Service serviceCreated = serviceDAO.create(new Service(houseshare.get(), service.getTitle(), service.getDescription(), service.getCost()));
+            Service serviceCreated = serviceDAO.create(new Service(houseshare.get(), service.getTitle(), service.getDescription(), service.getCost(), service.getStatus()));
 
             return Response.created(uriInfo.getAbsolutePath()).entity(serviceCreated).build();
         }
@@ -143,7 +174,8 @@ public class ServiceRessource {
                             serviceToUpdate.get().getHouseshare(),
                             service.getTitle(),
                             service.getDescription(),
-                            service.getCost()
+                            service.getCost(),
+                            service.getStatus()
                     )
             );
 
