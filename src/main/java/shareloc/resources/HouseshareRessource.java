@@ -159,6 +159,26 @@ public class HouseshareRessource {
 
 
     // Houseshare members
+    @GET
+    @Path("/{id}/users")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getHouseshareMembers(@NotNull @PathParam("id") Integer id) {
+        Optional<User> user = userDAO.findByPseudo(securityContext.getUserPrincipal().getName());
+
+        if (user.isPresent()) {
+            Optional<Houseshare> houseshare = houseshareDAO.findById(id);
+
+            if (houseshare.isEmpty()) {
+                return buildHouseshareNotFoundErrorResponse();
+            }
+
+            return Response.ok(houseshare.get().getUsers()).build();
+        }
+
+        return Response.status(Response.Status.NOT_FOUND).build();
+
+    }
+
     @POST
     @Path("/{id}/users/")
     @Consumes(MediaType.APPLICATION_JSON)

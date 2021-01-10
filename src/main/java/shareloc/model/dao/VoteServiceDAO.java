@@ -1,6 +1,7 @@
 package shareloc.model.dao;
 
 import jakarta.persistence.NoResultException;
+import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 import shareloc.model.ejb.Houseshare;
@@ -35,4 +36,9 @@ public class VoteServiceDAO extends DAO<VoteService> {
         query.setParameter("service", service);
         return query.getResultList();
     }
+
+    /*@Transactional
+    public void deleteEndedVotes() {
+        Query query = em.createQuery("DELETE FROM VoteService vs WHERE ")
+    }*/
 }

@@ -17,6 +17,7 @@ import shareloc.model.validation.groups.VoteServiceConstraints;
 import shareloc.security.SignInNeeded;
 import shareloc.utils.ErrorCode;
 
+import java.util.List;
 import java.util.Optional;
 
 import static shareloc.utils.CustomResponse.buildErrorResponse;
@@ -101,6 +102,74 @@ public class VoteServiceRessource {
             VoteService voteServiceCreated = voteServiceDAO.create(
                     new VoteService(loggedInUser.get(), service.get(), voteService.getVoteType(), voteService.getVote())
             );
+
+            List<VoteService> voteList = voteServiceDAO.findByService(service.get());
+            List<User> users = houseshareDAO.findById(houseshareId).get().getUsers();
+
+            if (voteList.size() == users.size()) {
+                int positiveVote = 0;
+                int nevagiteVote = 0;
+
+                for (int i = 0; i < voteList.size(); i++) {
+                    if (voteList.get(i).getVote() == true) {
+                        positiveVote++;
+                    } else {
+                        nevagiteVote++;
+                    }
+                }
+                if (voteService.getVoteType() == 0) {
+                    if (positiveVote > nevagiteVote) {
+                        serviceDAO.update(
+                                new Service(
+                                        serviceId,
+                                        service.get().getHouseshare(),
+                                        service.get().getTitle(),
+                                        service.get().getDescription(),
+                                        service.get().getCost(),
+                                        1
+                                )
+                        );
+                    } else {
+                        serviceDAO.delete(service.get());
+                    }
+
+                    List<VoteService> voteToDelete = voteServiceDAO.findByService(service.get());
+
+                    for (int i = 0; i<voteToDelete.size(); i++) {
+                        voteServiceDAO.delete(voteToDelete.get(i));
+                    }
+                } else if (voteService.getVoteType() == 1) {
+                    if (positiveVote > nevagiteVote) {
+                        serviceDAO.update(
+                                new Service(
+                                        serviceId,
+                                        service.get().getHouseshare(),
+                                        service.get().getTitle(),
+                                        service.get().getDescription(),
+                                        service.get().getCost(),
+                                        0
+                                )
+                        );
+                    } else {
+                        serviceDAO.update(
+                                new Service(
+                                        serviceId,
+                                        service.get().getHouseshare(),
+                                        service.get().getTitle(),
+                                        service.get().getDescription(),
+                                        service.get().getCost(),
+                                        1
+                                )
+                        );
+                    }
+
+                    List<VoteService> voteToDelete = voteServiceDAO.findByService(service.get());
+
+                    for (int i = 0; i<voteToDelete.size(); i++) {
+                        voteServiceDAO.delete(voteToDelete.get(i));
+                    }
+                }
+            }
 
             return Response.created(uriInfo.getAbsolutePath()).entity(voteServiceCreated).build();
         }
