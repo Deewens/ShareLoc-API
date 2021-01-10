@@ -3,6 +3,7 @@ package shareloc.model.ejb;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.groups.Default;
 import shareloc.model.validation.groups.ServiceConstraints;
 
 @Entity
@@ -14,7 +15,7 @@ public class Service {
     @ManyToOne(targetEntity = Houseshare.class)
     private Houseshare houseshare; // Co-location du service
 
-    @NotBlank(groups = { ServiceConstraints.CreateServiceConstraint.class, ServiceConstraints.UpdateServiceConstraint.class })
+    @NotBlank(groups = { ServiceConstraints.CreateServiceConstraint.class, ServiceConstraints.UpdateServiceConstraint.class/*, Default.class*/ })
     @Column(nullable = false)
     private String title;
 
@@ -25,13 +26,22 @@ public class Service {
     @Column(nullable = false)
     private Integer cost;
 
-    @NotNull(groups = { ServiceConstraints.CreateServiceConstraint.class, ServiceConstraints.UpdateServiceConstraint.class })
+    @NotNull(groups = { ServiceConstraints.UpdateServiceConstraint.class })
     @Column(nullable = false)
-    private Integer status;
+    private Integer status; // 0 = inactif, 1 = actif, 2 = demande d'ajout, 3 = demande de suppresion
 
     public Service() {}
 
     public Service(Houseshare houseshare, String title, String description, int cost, int status) {
+        this.houseshare = houseshare;
+        this.title = title;
+        this.description = description;
+        this.cost = cost;
+        this.status = status;
+    }
+
+    public Service(Integer serviceId, Houseshare houseshare, String title, String description, int cost, int status) {
+        this.serviceId = serviceId;
         this.houseshare = houseshare;
         this.title = title;
         this.description = description;

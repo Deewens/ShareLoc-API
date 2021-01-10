@@ -16,6 +16,7 @@ public class ServiceDAO extends DAO<Service> {
     public List<Service> findByHouseshare(Houseshare houseshare) {
         TypedQuery<Service> query = em.createQuery("SELECT s FROM Service s WHERE s.houseshare = :houseshare", Service.class);
         query.setParameter("houseshare", houseshare);
+        System.out.println(query.getResultList().toString());
         return query.getResultList();
     }
 
