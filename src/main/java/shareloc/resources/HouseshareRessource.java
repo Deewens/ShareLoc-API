@@ -318,53 +318,20 @@ public class HouseshareRessource {
                             "User not in the houseshare",
                             "The user is not in the given houseshare.");
                 } else {
-                    int negativePoints = achievedServiceDAO.countNegativePointsByUser(
-                            houseshare.get(),
-                            user.get(),
-                            false); // mettre isValid à true après les tests
-
-                    int positivePoints = achievedServiceDAO.countPositivePointsByUser(
-                            houseshare.get(),
-                            user.get(),
-                            false); // mettre isValid à true après les tests*/
+                    int points = achievedServiceDAO.getPointsByUser(houseshare.get(), user.get(), true);
 
                     Map<String, Integer> result = new HashMap<>();
-                    result.put("points", positivePoints-negativePoints);
-
-                    List<AchievedService> achievedServiceList = achievedServiceDAO.findByHouseshare(houseshare.get());
-                    for(AchievedService value : achievedServiceList) {
-
-                    }
-                    System.out.println("Achieved service groupped by :" + achievedServiceList.toString());
-
+                    result.put("points", points);
 
                     return Response.ok(result).build();
                 }
 
-            } else { // on check les points pour tout les users de l'houseshare
-                /*List<AchievedService> achievedServiceListToUser = achievedServiceDAO.countNegativePoints(
-                        houseshare.get(),
-                        false); // mettre isValid à true après les tests
+            } else { // on check les points pour tout les users de l'houseshares
 
-                List<AchievedService> achievedServiceListFromUser = achievedServiceDAO.countPositivePoints(
-                        houseshare.get(),
-                        false); // mettre isValid à true après les tests
+                Map<String, Integer> result = new HashMap<>();
+                result.put("points", 0); // il faut le faire, mais c'est pas urgent et c'est vite fait
 
-                int negativePoint = 0;
-                int positivePoint = 0;
-
-                for (AchievedService achievedService : achievedServiceListToUser) {
-
-                    negativePoint = negativePoint + achievedService.getService().getCost();
-                };
-
-                for (AchievedService achievedService : achievedServiceListFromUser) {
-                    positivePoint = positivePoint + achievedService.getService().getCost();
-                };
-
-                int result = positivePoint - negativePoint;
-
-                return Response.ok(result).build();*/
+                return Response.ok(result).build();
             }
 
 

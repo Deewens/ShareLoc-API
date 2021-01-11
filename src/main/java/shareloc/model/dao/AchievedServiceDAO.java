@@ -25,97 +25,31 @@ public class AchievedServiceDAO extends DAO<AchievedService> {
         return query.getResultList();
     }
 
-    /**
-     * Récupère les servies achevés que l'utilisateur a fait pour les autres de tout les utilisateurs de la colocation
-     *
-     * @param houseshare
-     * @param isValid
-     * @return
-     */
-    @Transactional
-    public int countFrom(Houseshare houseshare, User user, boolean isValid) {
-        Query query = em.createQuery("SELECT COUNT(a) FROM AchievedService a WHERE a.houseshare = :houseshare AND a.from = :from AND a.valid = :valid AND a.service = :service GROUP BY a.date");
-        query.setParameter("houseshare", houseshare);
-        query.setParameter("from", user);
-        query.setParameter("valid", isValid);
-
-        Query query = em.createQuery("SELECT COUNT(a) FROM AchievedService a WHERE a.houseshare = :houseshare AND a.to = :to AND a.valid = :valid GROUP BY a.date, a.service");
-        query.setParameter("houseshare", houseshare);
-        query.setParameter("to", user);
-        query.setParameter("valid", isValid);
-
-        System.out.println("Query result: " + query.getSingleResult());
-        return ((BigDecimal) query.getSingleResult()).intValue();
-    }
-
 
     /**
-     * Récupère les servies achevés que l'utilisateur a fait pour les autres de tout les utilisateurs de la colocation
+     * Calcul le nombre de point d'un utilisateur en fonction de la co-location
      *
-     * @param houseshare
-     * @param isValid
-     * @return
+     * @param houseshare co-location
+     * @param user membre de la co-location
+     * @param isValid true = service validé, false = service non validé
+     * @return points calculés
      */
     @Transactional
-    public List<AchievedService> countPositivePoints(Houseshare houseshare, boolean isValid) {
-        TypedQuery<AchievedService> query = em.createQuery("SELECT a.from, COALESCE(SUM(a.service.cost), 0) FROM AchievedService a WHERE a.houseshare = :houseshare AND a.valid = :valid GROUP BY a.from, a.date", AchievedService.class);
-        query.setParameter("houseshare", houseshare);
-        query.setParameter("valid", isValid);
-        System.out.println(query.getResultList());
-        return query.getResultList();
-    }
+    public int getPointsByUser(Houseshare houseshare, User user, boolean isValid) {
+        Query queryPositive = em.createQuery("SELECT COALESCE(SUM(a.service.cost), 0) FROM AchievedService a WHERE a.houseshare = :houseshare AND a.from = :from AND a.valid = :valid"); // positive
+        queryPositive.setParameter("houseshare", houseshare);
+        queryPositive.setParameter("from", user);
+        queryPositive.setParameter("valid", isValid);
 
-    /**
-     * Récupère les servies achevés dont à profité l'utilisateur de tout les utilisateurs de la colocation
-     *
-     * @param houseshare
-     * @param isValid
-     * @return
-     */
-    @Transactional
-    public List<AchievedService> countNegativePoints(Houseshare houseshare, boolean isValid) {
-        TypedQuery<AchievedService> query = em.createQuery("SELECT a.to, COALESCE(SUM(a.service.cost), 0) FROM AchievedService a WHERE a.houseshare = :houseshare AND a.valid = :valid GROUP BY a.to, a.date", AchievedService.class);
-        query.setParameter("houseshare", houseshare);
-        query.setParameter("valid", isValid);
-        System.out.println(query.getResultList());
-        return query.getResultList();
-    }
+        Query queryNegative = em.createQuery("SELECT COALESCE(SUM(a.service.cost), 0) FROM AchievedService a WHERE a.houseshare = :houseshare AND a.to = :to AND a.valid = :valid"); // negative
+        queryNegative.setParameter("houseshare", houseshare);
+        queryNegative.setParameter("to", user);
+        queryNegative.setParameter("valid", isValid);
 
-    /**
-     * Récupère les servies achevés que l'utilisateur a fait pour les autres
-     *
-     * @param houseshare
-     * @param user
-     * @param isValid
-     * @return
-     */
-    @Transactional
-    public int countPositivePointsByUser(Houseshare houseshare, User user, boolean isValid) {
-        Query query = em.createQuery("SELECT COALESCE(SUM(a.service.cost), 0) FROM AchievedService a WHERE a.houseshare = :houseshare AND a.from = :from AND a.valid = :valid");
-        query.setParameter("houseshare", houseshare);
-        query.setParameter("from", user);
-        query.setParameter("valid", isValid);
+        int positivePoints = ((BigDecimal) queryPositive.getSingleResult()).intValue();
+        int negativePoints = ((BigDecimal) queryNegative.getSingleResult()).intValue();
 
-        System.out.println("Query result: " + query.getSingleResult());
-        return ((BigDecimal) query.getSingleResult()).intValue();
-    }
-
-    /**
-     * Récupère les servies achevés dont à profité l'utilisateur
-     *
-     * @param houseshare
-     * @param user
-     * @param isValid
-     * @return
-     */
-    @Transactional
-    public int countNegativePointsByUser(Houseshare houseshare, User user, boolean isValid) {
-        Query query = em.createQuery("SELECT COALESCE(SUM(a.service.cost), 0) FROM AchievedService a WHERE a.houseshare = :houseshare AND a.to = :to AND a.valid = :valid");
-        query.setParameter("houseshare", houseshare);
-        query.setParameter("to", user);
-        query.setParameter("valid", isValid);
-
-        System.out.println("Query result: " + query.getSingleResult());
-        return ((BigDecimal) query.getSingleResult()).intValue();
+        System.out.println("Query result: " + (positivePoints-negativePoints));
+        return positivePoints - negativePoints;
     }
 }
