@@ -130,6 +130,15 @@ public class AchievedServiceRessource {
                         "You can't create an achieved service with a service which does not exist.");
             }
 
+            if (service.get().getStatus() == 0 || service.get().getStatus() == 2) {
+                return buildErrorResponse(
+                        Response.Status.UNAUTHORIZED,
+                        ErrorCode.UNAUTHORIZED_ERROR,
+                        "Service with bad status",
+                        "You can't use a service with the status 0 or 2."
+                );
+            }
+
             Optional<User> beneficiaryUser = userDAO.findById(achievedService.getBeneficiaryId());
             if (beneficiaryUser.isEmpty()) {
                 return buildErrorResponse(
