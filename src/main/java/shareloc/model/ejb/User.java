@@ -38,24 +38,28 @@ public class User {
     @Column(nullable = false)
     private String lastname;
 
+    @Column(nullable = false)
+    private String salt;
 
     public User() {}
 
-    public User(int userId, String pseudo, String email, String password, String firstname, String lastname) {
+    public User(int userId, String pseudo, String email, String password, String firstname, String lastname, String salt) {
         this.userId = userId;
         this.pseudo = pseudo;
         this.email = email;
         this.password = password;
         this.firstname = firstname;
         this.lastname = lastname;
+        this.salt = salt;
     }
 
-    public User(String pseudo, String email, String password, String firstname, String lastname) {
+    public User(String pseudo, String email, String password, String firstname, String lastname, String salt) {
         this.pseudo = pseudo;
         this.email = email;
         this.password = password;
         this.firstname = firstname;
         this.lastname = lastname;
+        this.salt = salt;
     }
 
     public int getUserId() {
@@ -106,6 +110,10 @@ public class User {
         this.lastname = lastname;
     }
 
+    public String getSalt() { return this.salt; }
+
+    public void setSalt(String salt) { this.salt = salt; }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -116,7 +124,7 @@ public class User {
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, pseudo, email, password, firstname, lastname);
+        return Objects.hash(userId, pseudo, email, password, firstname, lastname, salt);
     }
 
     @Override
