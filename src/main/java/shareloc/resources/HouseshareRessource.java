@@ -6,9 +6,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.groups.ConvertGroup;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
+import shareloc.model.dao.AchievedServiceDAO;
 import shareloc.model.dao.HouseshareDAO;
 import shareloc.model.dao.ServiceDAO;
 import shareloc.model.dao.UserDAO;
+import shareloc.model.ejb.AchievedService;
 import shareloc.model.ejb.Houseshare;
 import shareloc.model.ejb.User;
 import shareloc.model.validation.ValidationErrorResponse;
@@ -34,6 +36,8 @@ public class HouseshareRessource {
     private UserDAO userDAO;
     @Inject
     private ServiceDAO serviceDAO;
+    @Inject
+    private AchievedServiceDAO achievedServiceDAO;
 
     // Cherche la liste des co-locations de l'utilisateur
     @GET
@@ -271,11 +275,85 @@ public class HouseshareRessource {
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
 
+
+    @GET
+    @Path("/{houseshareId}/myPoints")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getMembersPoint() {
+        return null;
+    }
+
+    @GET
+    @Path("/{houseshareId}/points")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getMemberPoint(@NotNull @PathParam("houseshareId") Integer houseshareId,
+                                   @QueryParam("userId") Integer userId) {
+        Optional<User> loggedInUser = userDAO.findByPseudo(securityContext.getUserPrincipal().getName());
+        Optional<Houseshare> houseshare = houseshareDAO.findById(houseshareId);
+
+        if (loggedInUser.isPresent()) {
+            if (houseshare.isEmpty()) {
+                return buildHouseshareNotFoundErrorResponse();
+            }
+
+            if (!houseshare.get().getUsers().contains(loggedInUser.get())) {
+                return buildUserNotInHouseshareErrorResponse();
+            }
+
+            if (userId != null) { // on check les points pour l'user donné
+                Optional<User> user = userDAO.findById(userId);
+
+                if (user.isEmpty()) {
+                    return buildErrorResponse(
+                            Response.Status.NOT_FOUND,
+                            ErrorCode.NOT_FOUND,
+                            "User not found",
+                            "The user does not exist in our database");
+                }
+
+                if (!houseshare.get().getUsers().contains(user.get())) {
+                    return buildErrorResponse(
+                            Response.Status.NOT_FOUND,
+                            ErrorCode.NOT_FOUND,
+                            "User not in the houseshare",
+                            "The user is not in the given houseshare.");
+                } else {
+                    int points = achievedServiceDAO.getPointsByUser(houseshare.get(), user.get(), true);
+
+                    Map<String, Integer> result = new HashMap<>();
+                    result.put("points", points);
+
+                    return Response.ok(result).build();
+                }
+
+            } else { // on check les points pour tout les users de l'houseshares
+
+                Map<String, Integer> result = new HashMap<>();
+                result.put("points", 0); // il faut le faire, mais c'est pas urgent et c'est vite fait
+
+                return Response.ok(result).build();
+            }
+
+
+
+        }
+
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+    }
+
     private Response buildHouseshareNotFoundErrorResponse() {
         return buildErrorResponse(
                 Response.Status.NOT_FOUND,
                 ErrorCode.NOT_FOUND,
                 "Houseshare not found",
                 "The houseshare you are trying to manage does not exist.");
+    }
+
+    private Response buildUserNotInHouseshareErrorResponse() {
+        return buildErrorResponse(
+                Response.Status.UNAUTHORIZED,
+                ErrorCode.UNAUTHORIZED_ERROR,
+                "User not in the houseshare",
+                "You are not in the houseshare that you gave.");
     }
 }
