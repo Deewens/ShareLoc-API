@@ -92,4 +92,16 @@ public class Service {
     public int getStatus() { return status; }
 
     public void setStatus(int status) { this.status = status; }
+
+    @Override
+    public String toString() {
+        return "Service{" +
+                "serviceId=" + serviceId +
+                ", houseshare=" + houseshare +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", cost=" + cost +
+                ", status=" + status +
+                '}';
+    }
 }

@@ -112,4 +112,18 @@ public class AchievedService {
     public void setValid(boolean valid) {
         this.valid = valid;
     }
+
+    @Override
+    public String toString() {
+        return "AchievedService{" +
+                "achievedServiceId=" + achievedServiceId +
+                ", service=" + service +
+                ", houseshare=" + houseshare +
+                ", from=" + from +
+                ", to=" + to +
+                ", date=" + date +
+                ", picture='" + picture + '\'' +
+                ", valid=" + valid +
+                '}';
+    }
 }
