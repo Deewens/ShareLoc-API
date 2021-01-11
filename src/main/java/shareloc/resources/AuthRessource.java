@@ -9,6 +9,7 @@ import shareloc.model.dao.UserDAO;
 import shareloc.model.ejb.User;
 import shareloc.model.validation.groups.SigningConstraint;
 import shareloc.model.validation.ValidationErrorResponse;
+import shareloc.security.PasswordUtils;
 import shareloc.security.JWTokenUtility;
 import shareloc.security.SignInNeeded;
 import shareloc.utils.ErrorCode;
@@ -23,6 +24,8 @@ public class AuthRessource {
     UriInfo uriInfo;
     @Inject
     private UserDAO userDAO;
+    @Inject
+    private PasswordUtils passwordUtils;
 
     @POST
     @Path("/login")
@@ -33,10 +36,13 @@ public class AuthRessource {
 
         Optional<User> userOptional = userDAO.findByEmail(email);
         if (userOptional.isPresent()) {
-            if (userOptional.get().getPassword().equals(user.getPassword())) {
+            boolean passwordMatch = PasswordUtils.verifyUserPassword(user.getPassword(), userOptional.get().getPassword(), userOptional.get().getSalt());
+
+            if (passwordMatch) {
                 HashMap<String, Object> data = new HashMap<>();
                 data.put("token", JWTokenUtility.buildJWT(userOptional.get().getPseudo()));
                 userOptional.get().setPassword(null);
+                userOptional.get().setSalt(null);
                 data.put("user", userOptional.get());
 
                 GenericEntity<HashMap<String, Object>> entity = new GenericEntity<>(data) {};
@@ -58,9 +64,12 @@ public class AuthRessource {
     public Response register(@Valid User user) {
         String email = user.getEmail();
         String pseudo = user.getPseudo();
-        String password = user.getPassword();
+        String plainPassword = user.getPassword();
         String firstname = user.getFirstname();
         String lastname = user.getLastname();
+
+        String salt = passwordUtils.getSalt(30);
+        String password = passwordUtils.generateSecurePassword(plainPassword, salt);
 
         Optional<User> checkEmail = userDAO.findByEmail(email);
         Optional<User> checkPseudo = userDAO.findByPseudo(pseudo);
@@ -89,8 +98,9 @@ public class AuthRessource {
             ValidationErrorResponse response = new ValidationErrorResponse("url", "Validation error", errors);
             return Response.status(422).entity(response).build();
         } else {
-            User userCreated = userDAO.create(new User(pseudo, email, password, firstname, lastname));
+            User userCreated = userDAO.create(new User(pseudo, email, password, firstname, lastname, salt));
             userCreated.setPassword(null);
+            userCreated.setSalt(null);
             return Response.created(uriInfo.getAbsolutePath()).entity(userCreated).build();
         }
     }
@@ -104,6 +114,7 @@ public class AuthRessource {
 
         if (userOptional.isPresent()) {
             userOptional.get().setPassword(null);
+            userOptional.get().setSalt(null);
             return Response.ok().entity(userOptional.get()).build();
         }
 
