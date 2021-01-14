@@ -72,6 +72,14 @@ public class HouseshareRessource {
         return Response.status(Response.Status.NOT_FOUND).build();
     }
 
+    /**
+     * Crée une co-location vide
+     *
+     * L'utilisateur qui lance cette requête devient l'administrateur de la co-location
+     *
+     * @param obj houseshare
+     * @return l'entité Houseshare qui a été créé.
+     */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)

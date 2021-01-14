@@ -15,7 +15,6 @@ public class AchievedService {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int achievedServiceId;
 
-
     @ManyToOne
     @JoinColumn(nullable = false)
     private Service service; // Il peut y avoir un seul service par ligne
@@ -23,6 +22,7 @@ public class AchievedService {
     @ManyToOne
     @JoinColumn(nullable = false)
     private Houseshare houseshare; // Il peut y avoir un seul houeshare par ligne
+
     @ManyToOne
     @JoinColumn(nullable = false)
     private User from;
@@ -32,7 +32,8 @@ public class AchievedService {
 
     @Column(nullable = false)
     private Date date;
-    @Column(nullable = false)
+
+    @Column()
     private String picture;
     @Column(nullable = false)
     private boolean valid;
