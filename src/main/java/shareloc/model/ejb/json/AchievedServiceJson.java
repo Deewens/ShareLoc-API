@@ -18,7 +18,6 @@ public class AchievedServiceJson {
     @Date(groups = AchievedServiceConstraints.CreateAchievedServiceConstraint.class )
     private String date;
 
-    @NotBlank(groups = AchievedServiceConstraints.CreateAchievedServiceConstraint.class )
     private String picture;
 
     public AchievedServiceJson() {}

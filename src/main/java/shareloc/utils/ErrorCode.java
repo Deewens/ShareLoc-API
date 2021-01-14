@@ -20,4 +20,7 @@ public class ErrorCode {
     public static final String TOO_LONG = "FIELD_TOO_LONG";
     public static final String TOO_SHORT = "FIELD_TOO_SHORT";
     public static final String DATE_ERROR = "DATE_FORMAT_ERROR";
+
+    // File upload
+    public static final String FILE_UPLOAD_FAILED = "FILE_UPLOAD_FAILED";
 }
