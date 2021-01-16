@@ -11,7 +11,6 @@ import shareloc.model.dao.HouseshareDAO;
 import shareloc.model.dao.ServiceDAO;
 import shareloc.model.dao.UserDAO;
 import shareloc.model.ejb.Houseshare;
-import shareloc.model.ejb.Message;
 import shareloc.model.ejb.Service;
 import shareloc.model.ejb.User;
 import shareloc.model.validation.groups.ServiceConstraints;
@@ -47,6 +46,11 @@ public class ServiceRessource {
     @Inject
     ServiceDAO serviceDAO;
 
+    /**
+     * Récupère la liste de tous les services
+     *
+     * @return La liste des services
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getServices(@QueryParam("status") Integer status) {
@@ -75,6 +79,12 @@ public class ServiceRessource {
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
 
+    /**
+     * Récupère le service d'id
+     *
+     * @param serviceId
+     * @return L'entité Service
+     */
     @GET
     @Path("{serviceId}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -126,6 +136,12 @@ public class ServiceRessource {
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }*/
 
+    /**
+     * Créer un service
+     *
+     * @param service Service à créer
+     * @return L'entité Service qui a été créé
+     */
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -150,7 +166,12 @@ public class ServiceRessource {
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
 
-
+    /**
+     * Met à jour (complétement ou partiellement) le service d'id {id}
+     *
+     * @param service Service à modifier
+     * @return L'entité Service qui a été modifié
+     */
     @PUT
     @Path("{serviceId}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -236,6 +257,12 @@ public class ServiceRessource {
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }*/
 
+    /**
+     * Supprime le service d'id
+     *
+     * @param serviceId
+     * @return NO_CONTENT response
+     */
     @DELETE
     @Path("{serviceId}")
     public Response deleteService(@NotNull @PathParam("serviceId") Integer serviceId) {

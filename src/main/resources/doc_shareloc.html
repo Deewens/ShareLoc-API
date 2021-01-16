@@ -1,0 +1,1293 @@
+<!DOCTYPE HTML><html><head><title>Shareloc (Alabic-Dudon) API documentation</title><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="generator" content="https://github.com/raml2html/raml2html 7.6.0"><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css"><script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.min.js"></script><script type="text/javascript" src="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script><script type="text/javascript">
+      $(document).ready(function() {
+  $('.page-header pre code, .top-resource-description pre code, .modal-body pre code').each(function(i, block) {
+    hljs.highlightBlock(block);
+  });
+
+  $('[data-toggle]').click(function() {
+    var selector = $(this).data('target') + ' pre code';
+    $(selector).each(function(i, block) {
+      hljs.highlightBlock(block);
+    });
+  });
+
+  // open modal on hashes like #_action_get
+  $(window).bind('hashchange', function(e) {
+    var anchor_id = document.location.hash.substr(1); //strip #
+    var element = $('#' + anchor_id);
+
+    // do we have such element + is it a modal?  --> show it
+    if (element.length && element.hasClass('modal')) {
+      element.modal('show');
+    }
+  });
+
+  // execute hashchange on first page load
+  $(window).trigger('hashchange');
+
+  // remove url fragment on modal hide
+  $('.modal').on('hidden.bs.modal', function() {
+    try {
+      if (history && history.replaceState) {
+          history.replaceState({}, '', '#');
+      }
+    } catch(e) {}
+  });
+});
+    </script><style>
+      .hljs {
+  background: transparent;
+}
+.parent {
+  color: #999;
+}
+.list-group-item > .badge {
+  float: none;
+  margin-right: 6px;
+}
+.panel-title > .methods {
+  float: right;
+}
+.badge {
+  border-radius: 0;
+  text-transform: uppercase;
+  width: 70px;
+  font-weight: normal;
+  color: #f3f3f6;
+  line-height: normal;
+}
+.badge_get {
+  background-color: #63a8e2;
+}
+.badge_post {
+  background-color: #6cbd7d;
+}
+.badge_put {
+  background-color: #22bac4;
+}
+.badge_delete {
+  background-color: #d26460;
+}
+.badge_patch {
+  background-color: #ccc444;
+}
+.list-group,
+.panel-group {
+  margin-bottom: 0;
+}
+.panel-group .panel+.panel-white {
+  margin-top: 0;
+}
+.panel-group .panel-white {
+  border-bottom: 1px solid #F5F5F5;
+  border-radius: 0;
+}
+.panel-white:last-child {
+  border-bottom-color: white;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+.panel-white .panel-heading {
+  background: white;
+}
+.tab-pane ul {
+  padding-left: 2em;
+}
+.tab-pane h1 {
+  font-size: 1.3em;
+}
+.tab-pane h2 {
+  font-size: 1.2em;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #ddd;
+}
+.tab-pane h3 {
+  font-size: 1.1em;
+}
+.tab-content {
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  padding: 10px;
+}
+#sidebar {
+  margin-top: 30px;
+  padding-right: 5px;
+  overflow: auto;
+  height: 90%;
+}
+.top-resource-description {
+  border-bottom: 1px solid #ddd;
+  background: #fcfcfc;
+  padding: 15px 15px 0 15px;
+  margin: -15px -15px 10px -15px;
+}
+.resource-description {
+  border-bottom: 1px solid #fcfcfc;
+  background: #fcfcfc;
+  padding: 15px 15px 0 15px;
+  margin: -15px -15px 10px -15px;
+}
+.resource-description p:last-child {
+  margin: 0;
+}
+.list-group .badge {
+  float: left;
+}
+.method_description {
+  margin-left: 85px;
+}
+.method_description p:last-child {
+  margin: 0;
+}
+.list-group-item {
+  cursor: pointer;
+}
+.list-group-item:hover {
+  background-color: #f5f5f5;
+}
+pre code {
+  overflow: auto;
+  word-wrap: normal;
+  white-space: pre;
+}
+.items {
+  background: #f5f5f5;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 9.5px;
+  margin: 0 0 10px;
+  font-size: 13px;
+  line-height: 1.42857143;
+}
+.examples {
+  margin-left: 0.5em;
+}
+.resource-modal li > ul {
+  margin-bottom: 1em;
+}
+.required {
+  color: #f00;
+}
+    </style></head><body data-spy="scroll" data-target="#sidebar"><div class="container"><div class="row"><div class="col-md-9" role="main"><div class="page-header"><h1>Shareloc (Alabic-Dudon) API documentation <small>version 1</small></h1><p>https://cdad151.iutrs.unistra.fr:8080/ShareLoc-API-1.0-SNAPSHOT/api/</p></div><div class="panel panel-default"><div class="panel-heading"><h3 id="login" class="panel-title">/login</h3></div><div class="panel-body"><div class="panel-group"><div class="panel panel-white resource-modal"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_login"><span class="parent"></span>/login</a> <span class="methods"><a href="#login_post"><span class="badge badge_post">post</span></a></span></h4></div><div id="panel_login" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#login_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>Connexion d&#39;un utlisateur</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="login_post"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent"></span>/login</h4></div><div class="modal-body"><div class="alert alert-info"><p>Connexion d&#39;un utlisateur</p></div><ul class="nav nav-tabs"><li class="active"><a href="#login_post_request" data-toggle="tab">Request</a></li><li><a href="#login_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="login_post_request"><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+	"email": "alabic@gmail.com",
+	"password": "12345678"
+}
+</code></pre></div></div><div class="tab-pane" id="login_post_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "user": {
+    "email": "alabic@gmail.com",
+    "firstname": "Nemanja",
+    "lastname": "Alabic",
+    "pseudo": "alabic",
+    "userId": 1
+  },
+  "token": "eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJhbGFiaWMifQ.Q-Sozimkrlepl9rVggcOFEOSq6KcRDWv42PINwkH7B2827uJLTeeGBdtqD68SCywR-EH-MXYDZoA8E9G0cztTpvrbQgl2kozxLgm_ZlWczKJ7epg9hSqyAncHepLwm2eCYKWWpdLzXyiArXpVMSwc6PNsgXhj7lowswlH8WHEapCW6UNNHEd6QKAfzvDDi6LSXp8_hDgBanErQVX3cUi_WCh_N02c1CaVEivPYC3zMGGw1piTHqcAjXyrsy3CrnGP2KvbJLm-xK3erC5zMQE03hCEThN8g124k2BIBdf-dYSRtacKaUWihF6MwMqnTozAsT0tpzAVYK40aWEMF_QsQ"
+}
+</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/401" target="_blank">401</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "code": "UNAUTHORIZED_ERROR",
+  "type": "link",
+  "title": "Credential errors",
+  "message": "Email or password does not match with an existing user."
+}
+</code></pre></div></div></div></div></div></div></div></div></div></div></div><div class="panel panel-default"><div class="panel-heading"><h3 id="signup" class="panel-title">/signup</h3></div><div class="panel-body"><div class="panel-group"><div class="panel panel-white resource-modal"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_signup"><span class="parent"></span>/signup</a> <span class="methods"><a href="#signup_post"><span class="badge badge_post">post</span></a></span></h4></div><div id="panel_signup" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#signup_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>Inscription d&#39;un utlisateur</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="signup_post"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent"></span>/signup</h4></div><div class="modal-body"><div class="alert alert-info"><p>Inscription d&#39;un utlisateur</p></div><ul class="nav nav-tabs"><li class="active"><a href="#signup_post_request" data-toggle="tab">Request</a></li><li><a href="#signup_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="signup_post_request"><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+	"email": "alabic@gmail.com",
+	"password": "12345678",
+	"pseudo": "alabic",
+	"firstname": "Nemanja",
+	"lastname": "Alabic"
+}
+</code></pre></div></div><div class="tab-pane" id="signup_post_response"><h2>HTTP status code <a href="http://httpstatus.es/201" target="_blank">201</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "email": "alabic@gmail.com",
+  "firstname": "Nemanja",
+  "lastname": "Alabic",
+  "pseudo": "alabic",
+  "userId": 1
+}
+</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/422" target="_blank">422</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "errors": [
+    {
+      "code": "ALREADY_EXIST",
+      "field": "email",
+      "message": "email already exist in database",
+      "value": "alabic@gmail.com"
+    },
+    {
+      "code": "ALREADY_EXIST",
+      "field": "pseudo",
+      "message": "pseudo already exist in database",
+      "value": "alabic"
+    }
+  ],
+  "title": "Validation error",
+  "type": "url"
+}
+</code></pre></div></div></div></div></div></div></div></div></div></div></div><div class="panel panel-default"><div class="panel-heading"><h3 id="whoami" class="panel-title">/whoami</h3></div><div class="panel-body"><div class="panel-group"><div class="panel panel-white resource-modal"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_whoami"><span class="parent"></span>/whoami</a> <span class="methods"><a href="#whoami_get"><span class="badge badge_get">get</span></a></span></h4></div><div id="panel_whoami" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#whoami_get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Récupération du user grâce au token</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="whoami_get"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent"></span>/whoami</h4></div><div class="modal-body"><div class="alert alert-info"><p>Récupération du user grâce au token</p></div><ul class="nav nav-tabs"><li class="active"><a href="#whoami_get_request" data-toggle="tab">Request</a></li><li><a href="#whoami_get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="whoami_get_request"><h3>Headers</h3><ul><li><strong>Special token</strong>: <em><span class="required">required</span>(string)</em></li></ul></div><div class="tab-pane" id="whoami_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "email": "alabic@gmail.com",
+  "firstname": "Nemanja",
+  "lastname": "Alabic",
+  "pseudo": "alabic",
+  "userId": 1
+}
+</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/401" target="_blank">401</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>Le mauvais jeton</code></pre></div></div></div></div></div></div></div></div></div></div></div><div class="panel panel-default"><div class="panel-heading"><h3 id="houseshares" class="panel-title">/houseshares</h3></div><div class="panel-body"><div class="panel-group"><div class="panel panel-white resource-modal"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_houseshares"><span class="parent"></span>/houseshares</a> <span class="methods"><a href="#houseshares_get"><span class="badge badge_get">get</span></a> <a href="#houseshares_post"><span class="badge badge_post">post</span></a></span></h4></div><div id="panel_houseshares" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#houseshares_get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Récupère la liste de toutes les colocations dont le membre est l&#39;utilisateur connecté</p></div><div class="clearfix"></div></div><div onclick="window.location.href = '#houseshares_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>Crée une co-location vide</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="houseshares_get"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent"></span>/houseshares</h4></div><div class="modal-body"><div class="alert alert-info"><p>Récupère la liste de toutes les colocations dont le membre est l&#39;utilisateur connecté</p></div><ul class="nav nav-tabs"><li class="active"><a href="#houseshares_get_request" data-toggle="tab">Request</a></li><li><a href="#houseshares_get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="houseshares_get_request"><h3>Headers</h3><ul><li><strong>Special token</strong>: <em><span class="required">required</span>(string)</em></li></ul></div><div class="tab-pane" id="houseshares_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>[
+  {
+    "houseshareId": 1,
+    "manager": {
+      "email": "alabic@gmail.com",
+      "firstname": "Nemanja",
+      "lastname": "Alabic",
+      "password": "5M1fLvc3giVexu+dLEQKIYS+c9FpnXIp3rq2Ck0B9Ic=",
+      "pseudo": "alabic",
+      "salt": "SD8eNjaBXeBaXuLpPEOuyGTJuo34Vb",
+      "userId": 1
+    },
+    "name": "First houseshare",
+    "users": [
+      {
+        "email": "alabic@gmail.com",
+        "firstname": "Nemanja",
+        "lastname": "Alabic",
+        "password": "5M1fLvc3giVexu+dLEQKIYS+c9FpnXIp3rq2Ck0B9Ic=",
+        "pseudo": "alabic",
+        "salt": "SD8eNjaBXeBaXuLpPEOuyGTJuo34Vb",
+        "userId": 1
+      }
+    ]
+  },
+  {
+    "houseshareId": 2,
+    "manager": {
+      "email": "alabic@gmail.com",
+      "firstname": "Nemanja",
+      "lastname": "Alabic",
+      "password": "5M1fLvc3giVexu+dLEQKIYS+c9FpnXIp3rq2Ck0B9Ic=",
+      "pseudo": "alabic",
+      "salt": "SD8eNjaBXeBaXuLpPEOuyGTJuo34Vb",
+      "userId": 1
+    },
+    "name": "Second houseshare",
+    "users": [
+      {
+        "email": "alabic@gmail.com",
+        "firstname": "Nemanja",
+        "lastname": "Alabic",
+        "password": "5M1fLvc3giVexu+dLEQKIYS+c9FpnXIp3rq2Ck0B9Ic=",
+        "pseudo": "alabic",
+        "salt": "SD8eNjaBXeBaXuLpPEOuyGTJuo34Vb",
+        "userId": 1
+      }
+    ]
+  }
+]
+</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/401" target="_blank">401</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>Le mauvais jeton</code></pre></div></div></div></div></div></div></div><div class="modal fade" tabindex="0" id="houseshares_post"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent"></span>/houseshares</h4></div><div class="modal-body"><div class="alert alert-info"><p>Crée une co-location vide</p></div><ul class="nav nav-tabs"><li class="active"><a href="#houseshares_post_request" data-toggle="tab">Request</a></li><li><a href="#houseshares_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="houseshares_post_request"><h3>Headers</h3><ul><li><strong>Special token</strong>: <em><span class="required">required</span>(string)</em></li></ul><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "name": "Third houseshare"
+}
+</code></pre></div></div><div class="tab-pane" id="houseshares_post_response"><h2>HTTP status code <a href="http://httpstatus.es/201" target="_blank">201</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "houseshareId": 3,
+  "manager": {
+    "email": "alabic@gmail.com",
+    "firstname": "Nemanja",
+    "lastname": "Alabic",
+    "password": "5M1fLvc3giVexu+dLEQKIYS+c9FpnXIp3rq2Ck0B9Ic=",
+    "pseudo": "alabic",
+    "salt": "SD8eNjaBXeBaXuLpPEOuyGTJuo34Vb",
+    "userId": 1
+  },
+  "name": "Third houseshare",
+  "users": [
+    {
+      "email": "alabic@gmail.com",
+      "firstname": "Nemanja",
+      "lastname": "Alabic",
+      "password": "5M1fLvc3giVexu+dLEQKIYS+c9FpnXIp3rq2Ck0B9Ic=",
+      "pseudo": "alabic",
+      "salt": "SD8eNjaBXeBaXuLpPEOuyGTJuo34Vb",
+      "userId": 1
+    }
+  ]
+}
+</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/401" target="_blank">401</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>Le mauvais jeton</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/422" target="_blank">422</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "errors": [
+    {
+      "code": "ALREADY_EXIST",
+      "field": "name",
+      "message": "name already exist in database",
+      "value": "Third houseshare"
+    }
+  ],
+  "title": "Validation error",
+  "type": "url"
+}
+</code></pre></div></div></div></div></div></div></div></div><div class="panel panel-white resource-modal"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_houseshares__houseshareid_"><span class="parent">/houseshares</span>/{houseshareId}</a> <span class="methods"><a href="#houseshares__houseshareid__get"><span class="badge badge_get">get</span></a> <a href="#houseshares__houseshareid__put"><span class="badge badge_put">put</span></a> <a href="#houseshares__houseshareid__delete"><span class="badge badge_delete">delete</span></a></span></h4></div><div id="panel_houseshares__houseshareid_" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#houseshares__houseshareid__get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Cherche une co-location par son ID si l&#39;utilsateur est dedans</p></div><div class="clearfix"></div></div><div onclick="window.location.href = '#houseshares__houseshareid__put'" class="list-group-item"><span class="badge badge_put">put</span><div class="method_description"><p>Met à jour (complétement ou partiellement) la colocation d&#39;id</p></div><div class="clearfix"></div></div><div onclick="window.location.href = '#houseshares__houseshareid__delete'" class="list-group-item"><span class="badge badge_delete">delete</span><div class="method_description"><p>Supprime la colocation d&#39;id</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="houseshares__houseshareid__get"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent">/houseshares</span>/{houseshareId}</h4></div><div class="modal-body"><div class="alert alert-info"><p>Cherche une co-location par son ID si l&#39;utilsateur est dedans</p></div><ul class="nav nav-tabs"><li class="active"><a href="#houseshares__houseshareid__get_request" data-toggle="tab">Request</a></li><li><a href="#houseshares__houseshareid__get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="houseshares__houseshareid__get_request"><h3>URI Parameters</h3><ul><li><strong>houseshareId</strong>: <em><span class="required">required</span>(string)</em></li></ul><h3>Headers</h3><ul><li><strong>Special token</strong>: <em><span class="required">required</span>(string)</em></li></ul></div><div class="tab-pane" id="houseshares__houseshareid__get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "houseshareId": 1,
+  "manager": {
+    "email": "alabic@gmail.com",
+    "firstname": "Nemanja",
+    "lastname": "Alabic",
+    "password": "5M1fLvc3giVexu+dLEQKIYS+c9FpnXIp3rq2Ck0B9Ic=",
+    "pseudo": "alabic",
+    "salt": "SD8eNjaBXeBaXuLpPEOuyGTJuo34Vb",
+    "userId": 1
+  },
+  "name": "First houseshare",
+  "users": [
+    {
+      "email": "alabic@gmail.com",
+      "firstname": "Nemanja",
+      "lastname": "Alabic",
+      "password": "5M1fLvc3giVexu+dLEQKIYS+c9FpnXIp3rq2Ck0B9Ic=",
+      "pseudo": "alabic",
+      "salt": "SD8eNjaBXeBaXuLpPEOuyGTJuo34Vb",
+      "userId": 1
+    }
+  ]
+}
+</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/401" target="_blank">401</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>Le mauvais jeton</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>L&#39;entité n&#39;est pas trouvé</code></pre></div></div></div></div></div></div></div><div class="modal fade" tabindex="0" id="houseshares__houseshareid__put"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_put">put</span> <span class="parent">/houseshares</span>/{houseshareId}</h4></div><div class="modal-body"><div class="alert alert-info"><p>Met à jour (complétement ou partiellement) la colocation d&#39;id</p></div><ul class="nav nav-tabs"><li class="active"><a href="#houseshares__houseshareid__put_request" data-toggle="tab">Request</a></li><li><a href="#houseshares__houseshareid__put_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="houseshares__houseshareid__put_request"><h3>URI Parameters</h3><ul><li><strong>houseshareId</strong>: <em><span class="required">required</span>(string)</em></li></ul><h3>Headers</h3><ul><li><strong>Special token</strong>: <em><span class="required">required</span>(string)</em></li></ul><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+    "name": "Fourth houseshare"
+}
+</code></pre></div></div><div class="tab-pane" id="houseshares__houseshareid__put_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "houseshareId": 3,
+  "manager": {
+    "email": "alabic@gmail.com",
+    "firstname": "Nemanja",
+    "lastname": "Alabic",
+    "password": "5M1fLvc3giVexu+dLEQKIYS+c9FpnXIp3rq2Ck0B9Ic=",
+    "pseudo": "alabic",
+    "salt": "SD8eNjaBXeBaXuLpPEOuyGTJuo34Vb",
+    "userId": 1
+  },
+  "name": "Fourth houseshare",
+  "users": [
+    {
+      "email": "alabic@gmail.com",
+      "firstname": "Nemanja",
+      "lastname": "Alabic",
+      "password": "5M1fLvc3giVexu+dLEQKIYS+c9FpnXIp3rq2Ck0B9Ic=",
+      "pseudo": "alabic",
+      "salt": "SD8eNjaBXeBaXuLpPEOuyGTJuo34Vb",
+      "userId": 1
+    }
+  ]
+}
+</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/401" target="_blank">401</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>Le mauvais jeton</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>L&#39;entité n&#39;est pas trouvé</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/422" target="_blank">422</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "errors": [
+    {
+      "code": "ALREADY_EXIST",
+      "field": "name",
+      "message": "name already exist in database",
+      "value": "Third houseshare"
+    }
+  ],
+  "title": "Validation error",
+  "type": "url"
+}
+</code></pre></div></div></div></div></div></div></div><div class="modal fade" tabindex="0" id="houseshares__houseshareid__delete"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_delete">delete</span> <span class="parent">/houseshares</span>/{houseshareId}</h4></div><div class="modal-body"><div class="alert alert-info"><p>Supprime la colocation d&#39;id</p></div><ul class="nav nav-tabs"><li class="active"><a href="#houseshares__houseshareid__delete_request" data-toggle="tab">Request</a></li><li><a href="#houseshares__houseshareid__delete_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="houseshares__houseshareid__delete_request"><h3>URI Parameters</h3><ul><li><strong>houseshareId</strong>: <em><span class="required">required</span>(string)</em></li></ul><h3>Headers</h3><ul><li><strong>Special token</strong>: <em><span class="required">required</span>(string)</em></li></ul></div><div class="tab-pane" id="houseshares__houseshareid__delete_response"><h2>HTTP status code <a href="http://httpstatus.es/204" target="_blank">204</a></h2><h2>HTTP status code <a href="http://httpstatus.es/401" target="_blank">401</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>Le mauvais jeton</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>L&#39;entité n&#39;est pas trouvé</code></pre></div></div></div></div></div></div></div></div><div class="panel panel-white resource-modal"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_houseshares__houseshareid__users"><span class="parent">/houseshares/{houseshareId}</span>/users</a> <span class="methods"><a href="#houseshares__houseshareid__users_get"><span class="badge badge_get">get</span></a> <a href="#houseshares__houseshareid__users_post"><span class="badge badge_post">post</span></a></span></h4></div><div id="panel_houseshares__houseshareid__users" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#houseshares__houseshareid__users_get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Cherche tous les membres de la colocation d&#39;id</p></div><div class="clearfix"></div></div><div onclick="window.location.href = '#houseshares__houseshareid__users_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>Cherche tous les membres de la colocation d&#39;id</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="houseshares__houseshareid__users_get"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent">/houseshares/{houseshareId}</span>/users</h4></div><div class="modal-body"><div class="alert alert-info"><p>Cherche tous les membres de la colocation d&#39;id</p></div><ul class="nav nav-tabs"><li class="active"><a href="#houseshares__houseshareid__users_get_request" data-toggle="tab">Request</a></li><li><a href="#houseshares__houseshareid__users_get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="houseshares__houseshareid__users_get_request"><h3>URI Parameters</h3><ul><li><strong>houseshareId</strong>: <em><span class="required">required</span>(string)</em></li></ul><h3>Headers</h3><ul><li><strong>Special token</strong>: <em><span class="required">required</span>(string)</em></li></ul></div><div class="tab-pane" id="houseshares__houseshareid__users_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>[
+  {
+    "email": "alabic@gmail.com",
+    "firstname": "Nemanja",
+    "lastname": "Alabic",
+    "password": "5M1fLvc3giVexu+dLEQKIYS+c9FpnXIp3rq2Ck0B9Ic=",
+    "pseudo": "alabic",
+    "salt": "SD8eNjaBXeBaXuLpPEOuyGTJuo34Vb",
+    "userId": 1
+  },
+  {
+    "email": "nemanja@gmail.com",
+    "firstname": "Nemanja",
+    "lastname": "Alabic",
+    "password": "MqhJj74yPns73nE7Q2pZycPYE44JZnlNYLAmm0TFQNY=",
+    "pseudo": "nemanja",
+    "salt": "GxSsK3mlsJTTlaGkxTdydDr68ushPd",
+    "userId": 3
+  }
+]
+</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/401" target="_blank">401</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>Le mauvais jeton</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>L&#39;entité n&#39;est pas trouvé</code></pre></div></div></div></div></div></div></div><div class="modal fade" tabindex="0" id="houseshares__houseshareid__users_post"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent">/houseshares/{houseshareId}</span>/users</h4></div><div class="modal-body"><div class="alert alert-info"><p>Cherche tous les membres de la colocation d&#39;id</p></div><ul class="nav nav-tabs"><li class="active"><a href="#houseshares__houseshareid__users_post_request" data-toggle="tab">Request</a></li><li><a href="#houseshares__houseshareid__users_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="houseshares__houseshareid__users_post_request"><h3>URI Parameters</h3><ul><li><strong>houseshareId</strong>: <em><span class="required">required</span>(string)</em></li></ul><h3>Headers</h3><ul><li><strong>Special token</strong>: <em><span class="required">required</span>(string)</em></li></ul><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "email": "alabic@gmail.com",
+  "firstname": "Nemanja",
+  "lastname": "Alabic",
+  "pseudo": "alabic",
+  "userId": 1
+}
+</code></pre></div></div><div class="tab-pane" id="houseshares__houseshareid__users_post_response"><h2>HTTP status code <a href="http://httpstatus.es/201" target="_blank">201</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>[
+  {
+    "email": "alabic@gmail.com",
+    "firstname": "Nemanja",
+    "lastname": "Alabic",
+    "password": "5M1fLvc3giVexu+dLEQKIYS+c9FpnXIp3rq2Ck0B9Ic=",
+    "pseudo": "alabic",
+    "salt": "SD8eNjaBXeBaXuLpPEOuyGTJuo34Vb",
+    "userId": 1
+  },
+  {
+    "email": "deewens@gmail.com",
+    "firstname": "Adrien",
+    "lastname": "Dudon",
+    "password": "Rl95sSNooMSF87G8abbDA48cDQshBwLNlxAHoH5wf5U=",
+    "pseudo": "deewens",
+    "salt": "XDjKfIFxfNibCz7Ir3YMbBKIc24k3C",
+    "userId": 2
+  },
+  {
+    "email": "nemanja@gmail.com",
+    "firstname": "Nemanja",
+    "lastname": "Alabic",
+    "password": "wHXBj6Gco8nInajL7BxvIxQbpWG+JReygngz+8yTkVk=",
+    "pseudo": "nemanja",
+    "salt": "gbZaLbiqzBk3UOLHQJqooB0Z9WelNc",
+    "userId": 4
+  }
+]
+</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/400" target="_blank">400</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>L&#39;entité existe déjà</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/401" target="_blank">401</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>Le mauvais jeton</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>L&#39;entité n&#39;est pas trouvé</code></pre></div></div></div></div></div></div></div></div><div class="panel panel-white resource-modal"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_houseshares__houseshareid__users__userid_"><span class="parent">/houseshares/{houseshareId}/users</span>/{userId}</a> <span class="methods"><a href="#houseshares__houseshareid__users__userid__delete"><span class="badge badge_delete">delete</span></a></span></h4></div><div id="panel_houseshares__houseshareid__users__userid_" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#houseshares__houseshareid__users__userid__delete'" class="list-group-item"><span class="badge badge_delete">delete</span><div class="method_description"><p>Supprime le membre de la colocation d&#39;id</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="houseshares__houseshareid__users__userid__delete"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_delete">delete</span> <span class="parent">/houseshares/{houseshareId}/users</span>/{userId}</h4></div><div class="modal-body"><div class="alert alert-info"><p>Supprime le membre de la colocation d&#39;id</p></div><ul class="nav nav-tabs"><li class="active"><a href="#houseshares__houseshareid__users__userid__delete_request" data-toggle="tab">Request</a></li><li><a href="#houseshares__houseshareid__users__userid__delete_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="houseshares__houseshareid__users__userid__delete_request"><h3>URI Parameters</h3><ul><li><strong>houseshareId</strong>: <em><span class="required">required</span>(string)</em></li><li><strong>userId</strong>: <em><span class="required">required</span>(string)</em></li></ul><h3>Headers</h3><ul><li><strong>Special token</strong>: <em><span class="required">required</span>(string)</em></li></ul></div><div class="tab-pane" id="houseshares__houseshareid__users__userid__delete_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>[
+  {
+    "email": "alabic@gmail.com",
+    "firstname": "Nemanja",
+    "lastname": "Alabic",
+    "password": "5M1fLvc3giVexu+dLEQKIYS+c9FpnXIp3rq2Ck0B9Ic=",
+    "pseudo": "alabic",
+    "salt": "SD8eNjaBXeBaXuLpPEOuyGTJuo34Vb",
+    "userId": 1
+  },
+  {
+    "email": "deewens@gmail.com",
+    "firstname": "Adrien",
+    "lastname": "Dudon",
+    "password": "Rl95sSNooMSF87G8abbDA48cDQshBwLNlxAHoH5wf5U=",
+    "pseudo": "deewens",
+    "salt": "XDjKfIFxfNibCz7Ir3YMbBKIc24k3C",
+    "userId": 2
+  }
+]
+</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/401" target="_blank">401</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>Le mauvais jeton</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>L&#39;entité n&#39;est pas trouvé</code></pre></div></div></div></div></div></div></div></div><div class="panel panel-white resource-modal"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_houseshares__houseshareid__points"><span class="parent">/houseshares/{houseshareId}</span>/points</a> <span class="methods"><a href="#houseshares__houseshareid__points_get"><span class="badge badge_get">get</span></a></span></h4></div><div id="panel_houseshares__houseshareid__points" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#houseshares__houseshareid__points_get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Récupère les points d&#39;utilisateur d&#39;id</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="houseshares__houseshareid__points_get"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent">/houseshares/{houseshareId}</span>/points</h4></div><div class="modal-body"><div class="alert alert-info"><p>Récupère les points d&#39;utilisateur d&#39;id</p></div><ul class="nav nav-tabs"><li class="active"><a href="#houseshares__houseshareid__points_get_request" data-toggle="tab">Request</a></li><li><a href="#houseshares__houseshareid__points_get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="houseshares__houseshareid__points_get_request"><h3>URI Parameters</h3><ul><li><strong>houseshareId</strong>: <em><span class="required">required</span>(string)</em></li></ul><h3>Headers</h3><ul><li><strong>Special token</strong>: <em><span class="required">required</span>(string)</em></li></ul><h3>Query Parameters</h3><ul><li><strong>id</strong>: <em>(object)</em><p>L&#39;utilisateur d&#39;id</p><ul><li><strong>userId</strong>: <em><span class="required">required</span>(integer)</em></li><li><strong>pseudo</strong>: <em><span class="required">required</span>(string)</em></li><li><strong>email</strong>: <em><span class="required">required</span>(string)</em></li><li><strong>firstname</strong>: <em><span class="required">required</span>(string)</em></li><li><strong>lastname</strong>: <em><span class="required">required</span>(string)</em></li><li><strong>salt</strong>: <em><span class="required">required</span>(string)</em></li></ul></li></ul></div><div class="tab-pane" id="houseshares__houseshareid__points_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "points": 75
+}
+</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/401" target="_blank">401</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>Le mauvais jeton</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>L&#39;entité n&#39;est pas trouvé</code></pre></div></div></div></div></div></div></div></div><div class="panel panel-white resource-modal"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_houseshares__houseshareid__messages"><span class="parent">/houseshares/{houseshareId}</span>/messages</a> <span class="methods"><a href="#houseshares__houseshareid__messages_get"><span class="badge badge_get">get</span></a> <a href="#houseshares__houseshareid__messages_post"><span class="badge badge_post">post</span></a></span></h4></div><div id="panel_houseshares__houseshareid__messages" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#houseshares__houseshareid__messages_get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Récupère les messages de collocation d&#39;id</p></div><div class="clearfix"></div></div><div onclick="window.location.href = '#houseshares__houseshareid__messages_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>Crée nouveau message</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="houseshares__houseshareid__messages_get"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent">/houseshares/{houseshareId}</span>/messages</h4></div><div class="modal-body"><div class="alert alert-info"><p>Récupère les messages de collocation d&#39;id</p></div><ul class="nav nav-tabs"><li class="active"><a href="#houseshares__houseshareid__messages_get_request" data-toggle="tab">Request</a></li><li><a href="#houseshares__houseshareid__messages_get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="houseshares__houseshareid__messages_get_request"><h3>URI Parameters</h3><ul><li><strong>houseshareId</strong>: <em><span class="required">required</span>(string)</em></li></ul><h3>Headers</h3><ul><li><strong>Special token</strong>: <em><span class="required">required</span>(string)</em></li></ul></div><div class="tab-pane" id="houseshares__houseshareid__messages_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "houseshare": {
+    "houseshareId": 1,
+    "manager": {
+      "email": "alabic@gmail.com",
+      "firstname": "Nemanja",
+      "lastname": "Alabic",
+      "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+      "pseudo": "alabic",
+      "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+      "userId": 1
+    },
+    "name": "First houseshare",
+    "users": [
+      {
+        "email": "alabic@gmail.com",
+        "firstname": "Nemanja",
+        "lastname": "Alabic",
+        "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+        "pseudo": "alabic",
+        "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+        "userId": 1
+      }
+    ]
+  },
+  "messageContent": "First message",
+  "messageDate": "2021-01-16T00:01:37.619Z[UTC]",
+  "messageId": 1,
+  "user": {
+    "email": "alabic@gmail.com",
+    "firstname": "Nemanja",
+    "lastname": "Alabic",
+    "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+    "pseudo": "alabic",
+    "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+    "userId": 1
+  }
+}
+</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/204" target="_blank">204</a></h2><h2>HTTP status code <a href="http://httpstatus.es/401" target="_blank">401</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>Le mauvais jeton</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>L&#39;entité n&#39;est pas trouvé</code></pre></div></div></div></div></div></div></div><div class="modal fade" tabindex="0" id="houseshares__houseshareid__messages_post"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent">/houseshares/{houseshareId}</span>/messages</h4></div><div class="modal-body"><div class="alert alert-info"><p>Crée nouveau message</p></div><ul class="nav nav-tabs"><li class="active"><a href="#houseshares__houseshareid__messages_post_request" data-toggle="tab">Request</a></li><li><a href="#houseshares__houseshareid__messages_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="houseshares__houseshareid__messages_post_request"><h3>URI Parameters</h3><ul><li><strong>houseshareId</strong>: <em><span class="required">required</span>(string)</em></li></ul><h3>Headers</h3><ul><li><strong>Special token</strong>: <em><span class="required">required</span>(string)</em></li></ul><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "messageContent": "First message"
+}
+</code></pre></div></div><div class="tab-pane" id="houseshares__houseshareid__messages_post_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "houseshare": {
+    "houseshareId": 1,
+    "manager": {
+      "email": "alabic@gmail.com",
+      "firstname": "Nemanja",
+      "lastname": "Alabic",
+      "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+      "pseudo": "alabic",
+      "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+      "userId": 1
+    },
+    "name": "First houseshare",
+    "users": [
+      {
+        "email": "alabic@gmail.com",
+        "firstname": "Nemanja",
+        "lastname": "Alabic",
+        "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+        "pseudo": "alabic",
+        "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+        "userId": 1
+      }
+    ]
+  },
+  "messageContent": "First message",
+  "messageDate": "2021-01-16T00:01:37.619Z[UTC]",
+  "messageId": 1,
+  "user": {
+    "email": "alabic@gmail.com",
+    "firstname": "Nemanja",
+    "lastname": "Alabic",
+    "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+    "pseudo": "alabic",
+    "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+    "userId": 1
+  }
+}
+</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/401" target="_blank">401</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>Le mauvais jeton</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>L&#39;entité n&#39;est pas trouvé</code></pre></div></div></div></div></div></div></div></div><div class="panel panel-white resource-modal"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_houseshares__houseshareid__services"><span class="parent">/houseshares/{houseshareId}</span>/services</a> <span class="methods"><a href="#houseshares__houseshareid__services_get"><span class="badge badge_get">get</span></a> <a href="#houseshares__houseshareid__services_post"><span class="badge badge_post">post</span></a></span></h4></div><div id="panel_houseshares__houseshareid__services" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#houseshares__houseshareid__services_get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Récupère la liste de tous les services</p></div><div class="clearfix"></div></div><div onclick="window.location.href = '#houseshares__houseshareid__services_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>Créer un service</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="houseshares__houseshareid__services_get"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent">/houseshares/{houseshareId}</span>/services</h4></div><div class="modal-body"><div class="alert alert-info"><p>Récupère la liste de tous les services</p></div><ul class="nav nav-tabs"><li class="active"><a href="#houseshares__houseshareid__services_get_request" data-toggle="tab">Request</a></li><li><a href="#houseshares__houseshareid__services_get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="houseshares__houseshareid__services_get_request"><h3>URI Parameters</h3><ul><li><strong>houseshareId</strong>: <em><span class="required">required</span>(string)</em></li></ul><h3>Headers</h3><ul><li><strong>Special token</strong>: <em><span class="required">required</span>(string)</em></li></ul></div><div class="tab-pane" id="houseshares__houseshareid__services_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>[
+  {
+    "cost": 100,
+    "description": "Aller refaire tout",
+    "houseshare": {
+      "houseshareId": 1,
+      "manager": {
+        "email": "alabic@gmail.com",
+        "firstname": "Nemanja",
+        "lastname": "Alabic",
+        "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+        "pseudo": "alabic",
+        "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+        "userId": 1
+      },
+      "name": "First houseshare",
+      "users": [
+        {
+          "email": "alabic@gmail.com",
+          "firstname": "Nemanja",
+          "lastname": "Alabic",
+          "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+          "pseudo": "alabic",
+          "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+          "userId": 1
+        }
+      ]
+    },
+    "serviceId": 1,
+    "status": 2,
+    "title": "Faire le menage"
+  },
+  {
+    "cost": 50,
+    "description": "Remplir le frigo!",
+    "houseshare": {
+      "houseshareId": 1,
+      "manager": {
+        "email": "alabic@gmail.com",
+        "firstname": "Nemanja",
+        "lastname": "Alabic",
+        "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+        "pseudo": "alabic",
+        "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+        "userId": 1
+      },
+      "name": "First houseshare",
+      "users": [
+        {
+          "email": "alabic@gmail.com",
+          "firstname": "Nemanja",
+          "lastname": "Alabic",
+          "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+          "pseudo": "alabic",
+          "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+          "userId": 1
+        }
+      ]
+    },
+    "serviceId": 2,
+    "status": 2,
+    "title": "Faire des courses"
+  }
+]
+</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/401" target="_blank">401</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>Le mauvais jeton</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>L&#39;entité n&#39;est pas trouvé</code></pre></div></div></div></div></div></div></div><div class="modal fade" tabindex="0" id="houseshares__houseshareid__services_post"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent">/houseshares/{houseshareId}</span>/services</h4></div><div class="modal-body"><div class="alert alert-info"><p>Créer un service</p></div><ul class="nav nav-tabs"><li class="active"><a href="#houseshares__houseshareid__services_post_request" data-toggle="tab">Request</a></li><li><a href="#houseshares__houseshareid__services_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="houseshares__houseshareid__services_post_request"><h3>URI Parameters</h3><ul><li><strong>houseshareId</strong>: <em><span class="required">required</span>(string)</em></li></ul><h3>Headers</h3><ul><li><strong>Special token</strong>: <em><span class="required">required</span>(string)</em></li></ul><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "houseShareId": 1,
+  "userId": 1,
+  "title": "Faire le menage",
+  "cost": 100,
+  "description": "Aller refaire tout",
+  "status": 0
+}
+</code></pre></div></div><div class="tab-pane" id="houseshares__houseshareid__services_post_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "cost": 100,
+  "description": "Aller refaire tout",
+  "houseshare": {
+    "houseshareId": 1,
+    "manager": {
+      "email": "alabic@gmail.com",
+      "firstname": "Nemanja",
+      "lastname": "Alabic",
+      "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+      "pseudo": "alabic",
+      "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+      "userId": 1
+    },
+    "name": "First houseshare",
+    "users": [
+      {
+        "email": "alabic@gmail.com",
+        "firstname": "Nemanja",
+        "lastname": "Alabic",
+        "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+        "pseudo": "alabic",
+        "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+        "userId": 1
+      }
+    ]
+  },
+  "serviceId": 1,
+  "status": 2,
+  "title": "Faire le menage"
+}
+</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/401" target="_blank">401</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>Le mauvais jeton</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>L&#39;entité n&#39;est pas trouvé</code></pre></div></div></div></div></div></div></div></div><div class="panel panel-white resource-modal"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_houseshares__houseshareid__services__serviceid_"><span class="parent">/houseshares/{houseshareId}/services</span>/{serviceId}</a> <span class="methods"><a href="#houseshares__houseshareid__services__serviceid__get"><span class="badge badge_get">get</span></a> <a href="#houseshares__houseshareid__services__serviceid__put"><span class="badge badge_put">put</span></a> <a href="#houseshares__houseshareid__services__serviceid__delete"><span class="badge badge_delete">delete</span></a></span></h4></div><div id="panel_houseshares__houseshareid__services__serviceid_" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#houseshares__houseshareid__services__serviceid__get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Récupère le service d&#39;id</p></div><div class="clearfix"></div></div><div onclick="window.location.href = '#houseshares__houseshareid__services__serviceid__put'" class="list-group-item"><span class="badge badge_put">put</span><div class="method_description"><p>Met à jour (complétement ou partiellement) le service d&#39;id {id}</p></div><div class="clearfix"></div></div><div onclick="window.location.href = '#houseshares__houseshareid__services__serviceid__delete'" class="list-group-item"><span class="badge badge_delete">delete</span><div class="method_description"><p>Supprime le service d&#39;id</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="houseshares__houseshareid__services__serviceid__get"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent">/houseshares/{houseshareId}/services</span>/{serviceId}</h4></div><div class="modal-body"><div class="alert alert-info"><p>Récupère le service d&#39;id</p></div><ul class="nav nav-tabs"><li class="active"><a href="#houseshares__houseshareid__services__serviceid__get_request" data-toggle="tab">Request</a></li><li><a href="#houseshares__houseshareid__services__serviceid__get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="houseshares__houseshareid__services__serviceid__get_request"><h3>URI Parameters</h3><ul><li><strong>houseshareId</strong>: <em><span class="required">required</span>(string)</em></li><li><strong>serviceId</strong>: <em><span class="required">required</span>(string)</em></li></ul><h3>Headers</h3><ul><li><strong>Special token</strong>: <em><span class="required">required</span>(string)</em></li></ul></div><div class="tab-pane" id="houseshares__houseshareid__services__serviceid__get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "cost": 100,
+  "description": "Aller refaire tout",
+  "houseshare": {
+    "houseshareId": 1,
+    "manager": {
+      "email": "alabic@gmail.com",
+      "firstname": "Nemanja",
+      "lastname": "Alabic",
+      "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+      "pseudo": "alabic",
+      "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+      "userId": 1
+    },
+    "name": "First houseshare",
+    "users": [
+      {
+        "email": "alabic@gmail.com",
+        "firstname": "Nemanja",
+        "lastname": "Alabic",
+        "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+        "pseudo": "alabic",
+        "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+        "userId": 1
+      }
+    ]
+  },
+  "serviceId": 1,
+  "status": 2,
+  "title": "Faire le menage"
+}
+</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/401" target="_blank">401</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>Le mauvais jeton</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>L&#39;entité n&#39;est pas trouvé</code></pre></div></div></div></div></div></div></div><div class="modal fade" tabindex="0" id="houseshares__houseshareid__services__serviceid__put"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_put">put</span> <span class="parent">/houseshares/{houseshareId}/services</span>/{serviceId}</h4></div><div class="modal-body"><div class="alert alert-info"><p>Met à jour (complétement ou partiellement) le service d&#39;id {id}</p></div><ul class="nav nav-tabs"><li class="active"><a href="#houseshares__houseshareid__services__serviceid__put_request" data-toggle="tab">Request</a></li><li><a href="#houseshares__houseshareid__services__serviceid__put_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="houseshares__houseshareid__services__serviceid__put_request"><h3>URI Parameters</h3><ul><li><strong>houseshareId</strong>: <em><span class="required">required</span>(string)</em></li><li><strong>serviceId</strong>: <em><span class="required">required</span>(string)</em></li></ul><h3>Headers</h3><ul><li><strong>Special token</strong>: <em><span class="required">required</span>(string)</em></li></ul><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+	"houseShareId": 1,
+    "userId": 1,
+	"title": "Faire des courses",
+	"cost": 50,
+	"description": "Remplir le frigo completement !!!",
+	"status": 2
+}
+</code></pre></div></div><div class="tab-pane" id="houseshares__houseshareid__services__serviceid__put_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "cost": 50,
+  "description": "Remplir le frigo completement !!!",
+  "houseshare": {
+    "houseshareId": 1,
+    "manager": {
+      "email": "alabic@gmail.com",
+      "firstname": "Nemanja",
+      "lastname": "Alabic",
+      "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+      "pseudo": "alabic",
+      "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+      "userId": 1
+    },
+    "name": "First houseshare",
+    "users": [
+      {
+        "email": "alabic@gmail.com",
+        "firstname": "Nemanja",
+        "lastname": "Alabic",
+        "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+        "pseudo": "alabic",
+        "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+        "userId": 1
+      }
+    ]
+  },
+  "serviceId": 2,
+  "status": 2,
+  "title": "Faire des courses"
+}
+</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/400" target="_blank">400</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "code": "BAD_FORMAT",
+  "type": "link",
+  "title": "Bad service status",
+  "message": "The service status should be 2 or 3."
+}
+</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/401" target="_blank">401</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>Le mauvais jeton</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>L&#39;entité n&#39;est pas trouvé</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/422" target="_blank">422</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "errors": [
+    {
+      "code": "FIELD_NULL",
+      "field": "description",
+      "message": "description must not be null"
+    },
+    {
+      "code": "FIELD_BLANK",
+      "field": "title",
+      "message": "title must not be blank"
+    },
+    {
+      "code": "FIELD_NULL",
+      "field": "status",
+      "message": "status must not be null"
+    },
+    {
+      "code": "FIELD_NULL",
+      "field": "cost",
+      "message": "cost must not be null"
+    }
+  ],
+  "title": "Validation error",
+  "type": "url"
+}
+</code></pre></div></div></div></div></div></div></div><div class="modal fade" tabindex="0" id="houseshares__houseshareid__services__serviceid__delete"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_delete">delete</span> <span class="parent">/houseshares/{houseshareId}/services</span>/{serviceId}</h4></div><div class="modal-body"><div class="alert alert-info"><p>Supprime le service d&#39;id</p></div><ul class="nav nav-tabs"><li class="active"><a href="#houseshares__houseshareid__services__serviceid__delete_request" data-toggle="tab">Request</a></li><li><a href="#houseshares__houseshareid__services__serviceid__delete_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="houseshares__houseshareid__services__serviceid__delete_request"><h3>URI Parameters</h3><ul><li><strong>houseshareId</strong>: <em><span class="required">required</span>(string)</em></li><li><strong>serviceId</strong>: <em><span class="required">required</span>(string)</em></li></ul><h3>Headers</h3><ul><li><strong>Special token</strong>: <em><span class="required">required</span>(string)</em></li></ul></div><div class="tab-pane" id="houseshares__houseshareid__services__serviceid__delete_response"><h2>HTTP status code <a href="http://httpstatus.es/204" target="_blank">204</a></h2><h2>HTTP status code <a href="http://httpstatus.es/401" target="_blank">401</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>Le mauvais jeton</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>L&#39;entité n&#39;est pas trouvé</code></pre></div></div></div></div></div></div></div></div><div class="panel panel-white resource-modal"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_houseshares__houseshareid__voteservice__serviceid_"><span class="parent">/houseshares/{houseshareId}/voteservice</span>/{serviceId}</a> <span class="methods"><a href="#houseshares__houseshareid__voteservice__serviceid__get"><span class="badge badge_get">get</span></a> <a href="#houseshares__houseshareid__voteservice__serviceid__post"><span class="badge badge_post">post</span></a></span></h4></div><div id="panel_houseshares__houseshareid__voteservice__serviceid_" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#houseshares__houseshareid__voteservice__serviceid__get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Récupère tous les votes d&#39;un service de la collocation d&#39;id</p></div><div class="clearfix"></div></div><div onclick="window.location.href = '#houseshares__houseshareid__voteservice__serviceid__post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>Crée nouveau vote de service</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="houseshares__houseshareid__voteservice__serviceid__get"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent">/houseshares/{houseshareId}/voteservice</span>/{serviceId}</h4></div><div class="modal-body"><div class="alert alert-info"><p>Récupère tous les votes d&#39;un service de la collocation d&#39;id</p></div><ul class="nav nav-tabs"><li class="active"><a href="#houseshares__houseshareid__voteservice__serviceid__get_request" data-toggle="tab">Request</a></li><li><a href="#houseshares__houseshareid__voteservice__serviceid__get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="houseshares__houseshareid__voteservice__serviceid__get_request"><h3>URI Parameters</h3><ul><li><strong>houseshareId</strong>: <em><span class="required">required</span>(string)</em></li><li><strong>serviceId</strong>: <em><span class="required">required</span>(string)</em></li></ul><h3>Headers</h3><ul><li><strong>Special token</strong>: <em><span class="required">required</span>(string)</em></li></ul></div><div class="tab-pane" id="houseshares__houseshareid__voteservice__serviceid__get_response"><h2>HTTP status code <a href="http://httpstatus.es/201" target="_blank">201</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>[
+  {
+    "service": {
+      "cost": 100,
+      "description": "Aller refaire tout",
+      "houseshare": {
+        "houseshareId": 1,
+        "manager": {
+          "email": "alabic@gmail.com",
+          "firstname": "Nemanja",
+          "lastname": "Alabic",
+          "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+          "pseudo": "alabic",
+          "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+          "userId": 1
+        },
+        "name": "First houseshare",
+        "users": [
+          {
+            "email": "alabic@gmail.com",
+            "firstname": "Nemanja",
+            "lastname": "Alabic",
+            "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+            "pseudo": "alabic",
+            "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+            "userId": 1
+          },
+          {
+            "email": "deewens@gmail.com",
+            "firstname": "Adrien",
+            "lastname": "Dudon",
+            "password": "do5Cp3EEAcAkHrnJZZ3xjmZzDmVjxPpHNV83AG4M3pI=",
+            "pseudo": "deewens",
+            "salt": "WuIk9IFeKYM9X2XJwzS0Wqn2Cp46xP",
+            "userId": 2
+          }
+        ]
+      },
+      "serviceId": 1,
+      "status": 2,
+      "title": "Faire le menage"
+    },
+    "vote": false,
+    "voteServiceId": 1,
+    "voteType": 2,
+    "voter": {
+      "email": "alabic@gmail.com",
+      "firstname": "Nemanja",
+      "lastname": "Alabic",
+      "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+      "pseudo": "alabic",
+      "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+      "userId": 1
+    }
+  },
+  {
+    "service": {
+      "cost": 100,
+      "description": "Aller refaire tout",
+      "houseshare": {
+        "houseshareId": 1,
+        "manager": {
+          "email": "alabic@gmail.com",
+          "firstname": "Nemanja",
+          "lastname": "Alabic",
+          "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+          "pseudo": "alabic",
+          "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+          "userId": 1
+        },
+        "name": "First houseshare",
+        "users": [
+          {
+            "email": "alabic@gmail.com",
+            "firstname": "Nemanja",
+            "lastname": "Alabic",
+            "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+            "pseudo": "alabic",
+            "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+            "userId": 1
+          },
+          {
+            "email": "deewens@gmail.com",
+            "firstname": "Adrien",
+            "lastname": "Dudon",
+            "password": "do5Cp3EEAcAkHrnJZZ3xjmZzDmVjxPpHNV83AG4M3pI=",
+            "pseudo": "deewens",
+            "salt": "WuIk9IFeKYM9X2XJwzS0Wqn2Cp46xP",
+            "userId": 2
+          }
+        ]
+      },
+      "serviceId": 1,
+      "status": 2,
+      "title": "Faire le menage"
+    },
+    "vote": true,
+    "voteServiceId": 2,
+    "voteType": 2,
+    "voter": {
+      "email": "deewens@gmail.com",
+      "firstname": "Adrien",
+      "lastname": "Dudon",
+      "password": "do5Cp3EEAcAkHrnJZZ3xjmZzDmVjxPpHNV83AG4M3pI=",
+      "pseudo": "deewens",
+      "salt": "WuIk9IFeKYM9X2XJwzS0Wqn2Cp46xP",
+      "userId": 2
+    }
+  }
+]
+</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/401" target="_blank">401</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>Le mauvais jeton</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>L&#39;entité n&#39;est pas trouvé</code></pre></div></div></div></div></div></div></div><div class="modal fade" tabindex="0" id="houseshares__houseshareid__voteservice__serviceid__post"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent">/houseshares/{houseshareId}/voteservice</span>/{serviceId}</h4></div><div class="modal-body"><div class="alert alert-info"><p>Crée nouveau vote de service</p></div><ul class="nav nav-tabs"><li class="active"><a href="#houseshares__houseshareid__voteservice__serviceid__post_request" data-toggle="tab">Request</a></li><li><a href="#houseshares__houseshareid__voteservice__serviceid__post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="houseshares__houseshareid__voteservice__serviceid__post_request"><h3>URI Parameters</h3><ul><li><strong>houseshareId</strong>: <em><span class="required">required</span>(string)</em></li><li><strong>serviceId</strong>: <em><span class="required">required</span>(string)</em></li></ul><h3>Headers</h3><ul><li><strong>Special token</strong>: <em><span class="required">required</span>(string)</em></li></ul><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "voteType": "2",
+  "vote": true
+}
+</code></pre></div></div><div class="tab-pane" id="houseshares__houseshareid__voteservice__serviceid__post_response"><h2>HTTP status code <a href="http://httpstatus.es/201" target="_blank">201</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "service": {
+    "cost": 100,
+    "description": "Aller refaire tout",
+    "houseshare": {
+      "houseshareId": 1,
+      "manager": {
+        "email": "alabic@gmail.com",
+        "firstname": "Nemanja",
+        "lastname": "Alabic",
+        "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+        "pseudo": "alabic",
+        "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+        "userId": 1
+      },
+      "name": "First houseshare",
+      "users": [
+        {
+          "email": "alabic@gmail.com",
+          "firstname": "Nemanja",
+          "lastname": "Alabic",
+          "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+          "pseudo": "alabic",
+          "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+          "userId": 1
+        },
+        {
+          "email": "deewens@gmail.com",
+          "firstname": "Adrien",
+          "lastname": "Dudon",
+          "password": "do5Cp3EEAcAkHrnJZZ3xjmZzDmVjxPpHNV83AG4M3pI=",
+          "pseudo": "deewens",
+          "salt": "WuIk9IFeKYM9X2XJwzS0Wqn2Cp46xP",
+          "userId": 2
+        }
+      ]
+    },
+    "serviceId": 1,
+    "status": 2,
+    "title": "Faire le menage"
+  },
+  "vote": true,
+  "voteServiceId": 2,
+  "voteType": 2,
+  "voter": {
+    "email": "deewens@gmail.com",
+    "firstname": "Adrien",
+    "lastname": "Dudon",
+    "password": "do5Cp3EEAcAkHrnJZZ3xjmZzDmVjxPpHNV83AG4M3pI=",
+    "pseudo": "deewens",
+    "salt": "WuIk9IFeKYM9X2XJwzS0Wqn2Cp46xP",
+    "userId": 2
+  }
+}
+</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/401" target="_blank">401</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>Le mauvais jeton</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>L&#39;entité n&#39;est pas trouvé</code></pre></div></div></div></div></div></div></div></div><div class="panel panel-white resource-modal"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_houseshares__houseshareid__achieved_services"><span class="parent">/houseshares/{houseshareId}</span>/achieved-services</a> <span class="methods"><a href="#houseshares__houseshareid__achieved_services_get"><span class="badge badge_get">get</span></a> <a href="#houseshares__houseshareid__achieved_services_post"><span class="badge badge_post">post</span></a></span></h4></div><div id="panel_houseshares__houseshareid__achieved_services" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#houseshares__houseshareid__achieved_services_get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Récupère la liste de tous les services rendus</p></div><div class="clearfix"></div></div><div onclick="window.location.href = '#houseshares__houseshareid__achieved_services_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>Créer le service rendu</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="houseshares__houseshareid__achieved_services_get"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent">/houseshares/{houseshareId}</span>/achieved-services</h4></div><div class="modal-body"><div class="alert alert-info"><p>Récupère la liste de tous les services rendus</p></div><ul class="nav nav-tabs"><li class="active"><a href="#houseshares__houseshareid__achieved_services_get_request" data-toggle="tab">Request</a></li><li><a href="#houseshares__houseshareid__achieved_services_get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="houseshares__houseshareid__achieved_services_get_request"><h3>URI Parameters</h3><ul><li><strong>houseshareId</strong>: <em><span class="required">required</span>(string)</em></li></ul><h3>Headers</h3><ul><li><strong>Special token</strong>: <em><span class="required">required</span>(string)</em></li></ul></div><div class="tab-pane" id="houseshares__houseshareid__achieved_services_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>[
+  {
+    "achievedServiceId": 1,
+    "date": "2020-12-30T23:00:00Z[UTC]",
+    "from": {
+      "email": "alabic@gmail.com",
+      "firstname": "Nemanja",
+      "lastname": "Alabic",
+      "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+      "pseudo": "alabic",
+      "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+      "userId": 1
+    },
+    "houseshare": {
+      "houseshareId": 1,
+      "manager": {
+        "email": "alabic@gmail.com",
+        "firstname": "Nemanja",
+        "lastname": "Alabic",
+        "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+        "pseudo": "alabic",
+        "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+        "userId": 1
+      },
+      "name": "First houseshare",
+      "users": [
+        {
+          "email": "alabic@gmail.com",
+          "firstname": "Nemanja",
+          "lastname": "Alabic",
+          "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+          "pseudo": "alabic",
+          "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+          "userId": 1
+        },
+        {
+          "email": "deewens@gmail.com",
+          "firstname": "Adrien",
+          "lastname": "Dudon",
+          "password": "do5Cp3EEAcAkHrnJZZ3xjmZzDmVjxPpHNV83AG4M3pI=",
+          "pseudo": "deewens",
+          "salt": "WuIk9IFeKYM9X2XJwzS0Wqn2Cp46xP",
+          "userId": 2
+        }
+      ]
+    },
+    "picture": "",
+    "service": {
+      "cost": 80,
+      "description": "test",
+      "houseshare": {
+        "houseshareId": 1,
+        "manager": {
+          "email": "alabic@gmail.com",
+          "firstname": "Nemanja",
+          "lastname": "Alabic",
+          "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+          "pseudo": "alabic",
+          "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+          "userId": 1
+        },
+        "name": "First houseshare",
+        "users": [
+          {
+            "email": "alabic@gmail.com",
+            "firstname": "Nemanja",
+            "lastname": "Alabic",
+            "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+            "pseudo": "alabic",
+            "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+            "userId": 1
+          },
+          {
+            "email": "deewens@gmail.com",
+            "firstname": "Adrien",
+            "lastname": "Dudon",
+            "password": "do5Cp3EEAcAkHrnJZZ3xjmZzDmVjxPpHNV83AG4M3pI=",
+            "pseudo": "deewens",
+            "salt": "WuIk9IFeKYM9X2XJwzS0Wqn2Cp46xP",
+            "userId": 2
+          }
+        ]
+      },
+      "serviceId": 3,
+      "status": 1,
+      "title": "ttt"
+    },
+    "to": {
+      "email": "deewens@gmail.com",
+      "firstname": "Adrien",
+      "lastname": "Dudon",
+      "password": "do5Cp3EEAcAkHrnJZZ3xjmZzDmVjxPpHNV83AG4M3pI=",
+      "pseudo": "deewens",
+      "salt": "WuIk9IFeKYM9X2XJwzS0Wqn2Cp46xP",
+      "userId": 2
+    },
+    "valid": false
+  }
+]
+</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/401" target="_blank">401</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>Le mauvais jeton</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>L&#39;entité n&#39;est pas trouvé</code></pre></div></div></div></div></div></div></div><div class="modal fade" tabindex="0" id="houseshares__houseshareid__achieved_services_post"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent">/houseshares/{houseshareId}</span>/achieved-services</h4></div><div class="modal-body"><div class="alert alert-info"><p>Créer le service rendu</p></div><ul class="nav nav-tabs"><li class="active"><a href="#houseshares__houseshareid__achieved_services_post_request" data-toggle="tab">Request</a></li><li><a href="#houseshares__houseshareid__achieved_services_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="houseshares__houseshareid__achieved_services_post_request"><h3>URI Parameters</h3><ul><li><strong>houseshareId</strong>: <em><span class="required">required</span>(string)</em></li></ul><h3>Headers</h3><ul><li><strong>Special token</strong>: <em><span class="required">required</span>(string)</em></li></ul><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+	"service": 1,
+	"beneficiaryId": "2",
+	"serviceId": 3,
+	"date": "2020-12-31"
+}
+</code></pre></div></div><div class="tab-pane" id="houseshares__houseshareid__achieved_services_post_response"><h2>HTTP status code <a href="http://httpstatus.es/201" target="_blank">201</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "achievedServiceId": 1,
+  "date": "2020-12-30T23:00:00Z[UTC]",
+  "from": {
+    "email": "alabic@gmail.com",
+    "firstname": "Nemanja",
+    "lastname": "Alabic",
+    "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+    "pseudo": "alabic",
+    "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+    "userId": 1
+  },
+  "houseshare": {
+    "houseshareId": 1,
+    "manager": {
+      "email": "alabic@gmail.com",
+      "firstname": "Nemanja",
+      "lastname": "Alabic",
+      "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+      "pseudo": "alabic",
+      "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+      "userId": 1
+    },
+    "name": "First houseshare",
+    "users": [
+      {
+        "email": "alabic@gmail.com",
+        "firstname": "Nemanja",
+        "lastname": "Alabic",
+        "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+        "pseudo": "alabic",
+        "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+        "userId": 1
+      },
+      {
+        "email": "deewens@gmail.com",
+        "firstname": "Adrien",
+        "lastname": "Dudon",
+        "password": "do5Cp3EEAcAkHrnJZZ3xjmZzDmVjxPpHNV83AG4M3pI=",
+        "pseudo": "deewens",
+        "salt": "WuIk9IFeKYM9X2XJwzS0Wqn2Cp46xP",
+        "userId": 2
+      }
+    ]
+  },
+  "picture": "",
+  "service": {
+    "cost": 80,
+    "description": "Faire le menage",
+    "houseshare": {
+      "houseshareId": 1,
+      "manager": {
+        "email": "alabic@gmail.com",
+        "firstname": "Nemanja",
+        "lastname": "Alabic",
+        "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+        "pseudo": "alabic",
+        "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+        "userId": 1
+      },
+      "name": "First houseshare",
+      "users": [
+        {
+          "email": "alabic@gmail.com",
+          "firstname": "Nemanja",
+          "lastname": "Alabic",
+          "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+          "pseudo": "alabic",
+          "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+          "userId": 1
+        },
+        {
+          "email": "deewens@gmail.com",
+          "firstname": "Adrien",
+          "lastname": "Dudon",
+          "password": "do5Cp3EEAcAkHrnJZZ3xjmZzDmVjxPpHNV83AG4M3pI=",
+          "pseudo": "deewens",
+          "salt": "WuIk9IFeKYM9X2XJwzS0Wqn2Cp46xP",
+          "userId": 2
+        }
+      ]
+    },
+    "serviceId": 3,
+    "status": 1,
+    "title": "Faire le menage"
+  },
+  "to": {
+    "email": "deewens@gmail.com",
+    "firstname": "Adrien",
+    "lastname": "Dudon",
+    "password": "do5Cp3EEAcAkHrnJZZ3xjmZzDmVjxPpHNV83AG4M3pI=",
+    "pseudo": "deewens",
+    "salt": "WuIk9IFeKYM9X2XJwzS0Wqn2Cp46xP",
+    "userId": 2
+  },
+  "valid": false
+}
+</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/401" target="_blank">401</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>Le mauvais jeton</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>L&#39;entité n&#39;est pas trouvé</code></pre></div></div></div></div></div></div></div></div><div class="panel panel-white resource-modal"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_houseshares__houseshareid__achieved_services__achievedserviceid_"><span class="parent">/houseshares/{houseshareId}/achieved-services</span>/{achievedserviceId}</a> <span class="methods"><a href="#houseshares__houseshareid__achieved_services__achievedserviceid__get"><span class="badge badge_get">get</span></a></span></h4></div><div id="panel_houseshares__houseshareid__achieved_services__achievedserviceid_" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#houseshares__houseshareid__achieved_services__achievedserviceid__get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Récupère le service rendu d&#39;id</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="houseshares__houseshareid__achieved_services__achievedserviceid__get"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent">/houseshares/{houseshareId}/achieved-services</span>/{achievedserviceId}</h4></div><div class="modal-body"><div class="alert alert-info"><p>Récupère le service rendu d&#39;id</p></div><ul class="nav nav-tabs"><li class="active"><a href="#houseshares__houseshareid__achieved_services__achievedserviceid__get_request" data-toggle="tab">Request</a></li><li><a href="#houseshares__houseshareid__achieved_services__achievedserviceid__get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="houseshares__houseshareid__achieved_services__achievedserviceid__get_request"><h3>URI Parameters</h3><ul><li><strong>houseshareId</strong>: <em><span class="required">required</span>(string)</em></li><li><strong>achievedserviceId</strong>: <em><span class="required">required</span>(string)</em></li></ul><h3>Headers</h3><ul><li><strong>Special token</strong>: <em><span class="required">required</span>(string)</em></li></ul></div><div class="tab-pane" id="houseshares__houseshareid__achieved_services__achievedserviceid__get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "achievedServiceId": 1,
+  "date": "2020-12-30T23:00:00Z[UTC]",
+  "from": {
+    "email": "alabic@gmail.com",
+    "firstname": "Nemanja",
+    "lastname": "Alabic",
+    "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+    "pseudo": "alabic",
+    "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+    "userId": 1
+  },
+  "houseshare": {
+    "houseshareId": 1,
+    "manager": {
+      "email": "alabic@gmail.com",
+      "firstname": "Nemanja",
+      "lastname": "Alabic",
+      "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+      "pseudo": "alabic",
+      "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+      "userId": 1
+    },
+    "name": "First houseshare",
+    "users": [
+      {
+        "email": "alabic@gmail.com",
+        "firstname": "Nemanja",
+        "lastname": "Alabic",
+        "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+        "pseudo": "alabic",
+        "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+        "userId": 1
+      },
+      {
+        "email": "deewens@gmail.com",
+        "firstname": "Adrien",
+        "lastname": "Dudon",
+        "password": "do5Cp3EEAcAkHrnJZZ3xjmZzDmVjxPpHNV83AG4M3pI=",
+        "pseudo": "deewens",
+        "salt": "WuIk9IFeKYM9X2XJwzS0Wqn2Cp46xP",
+        "userId": 2
+      }
+    ]
+  },
+  "picture": "",
+  "service": {
+    "cost": 80,
+    "description": "test",
+    "houseshare": {
+      "houseshareId": 1,
+      "manager": {
+        "email": "alabic@gmail.com",
+        "firstname": "Nemanja",
+        "lastname": "Alabic",
+        "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+        "pseudo": "alabic",
+        "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+        "userId": 1
+      },
+      "name": "First houseshare",
+      "users": [
+        {
+          "email": "alabic@gmail.com",
+          "firstname": "Nemanja",
+          "lastname": "Alabic",
+          "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+          "pseudo": "alabic",
+          "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+          "userId": 1
+        },
+        {
+          "email": "deewens@gmail.com",
+          "firstname": "Adrien",
+          "lastname": "Dudon",
+          "password": "do5Cp3EEAcAkHrnJZZ3xjmZzDmVjxPpHNV83AG4M3pI=",
+          "pseudo": "deewens",
+          "salt": "WuIk9IFeKYM9X2XJwzS0Wqn2Cp46xP",
+          "userId": 2
+        }
+      ]
+    },
+    "serviceId": 3,
+    "status": 1,
+    "title": "ttt"
+  },
+  "to": {
+    "email": "deewens@gmail.com",
+    "firstname": "Adrien",
+    "lastname": "Dudon",
+    "password": "do5Cp3EEAcAkHrnJZZ3xjmZzDmVjxPpHNV83AG4M3pI=",
+    "pseudo": "deewens",
+    "salt": "WuIk9IFeKYM9X2XJwzS0Wqn2Cp46xP",
+    "userId": 2
+  },
+  "valid": false
+}
+</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/401" target="_blank">401</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>Le mauvais jeton</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>L&#39;entité n&#39;est pas trouvé</code></pre></div></div></div></div></div></div></div></div><div class="panel panel-white resource-modal"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_houseshares__houseshareid__achieved_services__achievedserviceid__upload_image"><span class="parent">/houseshares/{houseshareId}/achieved-services/{achievedserviceId}</span>/upload-image</a> <span class="methods"><a href="#houseshares__houseshareid__achieved_services__achievedserviceid__upload_image_post"><span class="badge badge_post">post</span></a></span></h4></div><div id="panel_houseshares__houseshareid__achieved_services__achievedserviceid__upload_image" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#houseshares__houseshareid__achieved_services__achievedserviceid__upload_image_post'" class="list-group-item"><span class="badge badge_post">post</span><div class="method_description"><p>Upload d&#39;une image vers le serveur</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="houseshares__houseshareid__achieved_services__achievedserviceid__upload_image_post"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent">/houseshares/{houseshareId}/achieved-services/{achievedserviceId}</span>/upload-image</h4></div><div class="modal-body"><div class="alert alert-info"><p>Upload d&#39;une image vers le serveur</p></div><ul class="nav nav-tabs"><li class="active"><a href="#houseshares__houseshareid__achieved_services__achievedserviceid__upload_image_post_request" data-toggle="tab">Request</a></li><li><a href="#houseshares__houseshareid__achieved_services__achievedserviceid__upload_image_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="houseshares__houseshareid__achieved_services__achievedserviceid__upload_image_post_request"><h3>URI Parameters</h3><ul><li><strong>houseshareId</strong>: <em><span class="required">required</span>(string)</em></li><li><strong>achievedserviceId</strong>: <em><span class="required">required</span>(string)</em></li></ul><h3>Headers</h3><ul><li><strong>Special token</strong>: <em><span class="required">required</span>(string)</em></li></ul><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: image/png, image/jpeg</p></div><div class="tab-pane" id="houseshares__houseshareid__achieved_services__achievedserviceid__upload_image_post_response"><h2>HTTP status code <a href="http://httpstatus.es/201" target="_blank">201</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: json</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+    "achievedServiceId": 2,
+    "date": "2020-12-30T23:00:00Z[UTC]",
+    "from": {
+        "email": "alabic@gmail.com",
+        "firstname": "Nemanja",
+        "lastname": "Alabic",
+        "password": "ZamCC0Gmlr2ic190p5eiDHtI+5woDczJipU9oc//IJE=",
+        "pseudo": "alabic",
+        "salt": "8Rz4I6YDdtfeEMd9dj3sL7uQnxoqj9",
+        "userId": 2
+    },
+    "houseshare": {
+        "houseshareId": 1,
+        "manager": {
+            "email": "alabic@gmail.com",
+            "firstname": "Nemanja",
+            "lastname": "Alabic",
+            "password": "ZamCC0Gmlr2ic190p5eiDHtI+5woDczJipU9oc//IJE=",
+            "pseudo": "alabic",
+            "salt": "8Rz4I6YDdtfeEMd9dj3sL7uQnxoqj9",
+            "userId": 2
+        },
+        "name": "First houseshare",
+        "users": [
+            {
+                "email": "alabic@gmail.com",
+                "firstname": "Nemanja",
+                "lastname": "Alabic",
+                "password": "ZamCC0Gmlr2ic190p5eiDHtI+5woDczJipU9oc//IJE=",
+                "pseudo": "alabic",
+                "salt": "8Rz4I6YDdtfeEMd9dj3sL7uQnxoqj9",
+                "userId": 2
+            }
+        ]
+    },
+    "picture": "http://localhost:8080/ShareLoc-API-1.0-SNAPSHOT/api/houseshares/1/achieved-services/2/download-image",
+    "service": {
+        "cost": 500,
+        "description": "azeaze",
+        "houseshare": {
+            "houseshareId": 1,
+            "manager": {
+                "email": "alabic@gmail.com",
+                "firstname": "Nemanja",
+                "lastname": "Alabic",
+                "password": "ZamCC0Gmlr2ic190p5eiDHtI+5woDczJipU9oc//IJE=",
+                "pseudo": "alabic",
+                "salt": "8Rz4I6YDdtfeEMd9dj3sL7uQnxoqj9",
+                "userId": 2
+            },
+            "name": "First houseshare",
+            "users": [
+                {
+                    "email": "alabic@gmail.com",
+                    "firstname": "Nemanja",
+                    "lastname": "Alabic",
+                    "password": "ZamCC0Gmlr2ic190p5eiDHtI+5woDczJipU9oc//IJE=",
+                    "pseudo": "alabic",
+                    "salt": "8Rz4I6YDdtfeEMd9dj3sL7uQnxoqj9",
+                    "userId": 2
+                }
+            ]
+        },
+        "serviceId": 1,
+        "status": 1,
+        "title": "Faire le menage"
+    },
+    "to": {
+        "email": "alabic@gmail.com",
+        "firstname": "Nemanja",
+        "lastname": "Alabic",
+        "password": "ZamCC0Gmlr2ic190p5eiDHtI+5woDczJipU9oc//IJE=",
+        "pseudo": "alabic",
+        "salt": "8Rz4I6YDdtfeEMd9dj3sL7uQnxoqj9",
+        "userId": 2
+    },
+    "valid": false
+}
+</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/401" target="_blank">401</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>Le mauvais jeton</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>L&#39;entité n&#39;est pas trouvé</code></pre></div></div></div></div></div></div></div></div><div class="panel panel-white resource-modal"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_houseshares__houseshareid__achieved_services__achievedserviceid__download_image"><span class="parent">/houseshares/{houseshareId}/achieved-services/{achievedserviceId}</span>/download-image</a> <span class="methods"><a href="#houseshares__houseshareid__achieved_services__achievedserviceid__download_image_get"><span class="badge badge_get">get</span></a></span></h4></div><div id="panel_houseshares__houseshareid__achieved_services__achievedserviceid__download_image" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#houseshares__houseshareid__achieved_services__achievedserviceid__download_image_get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Recupère l&#39;image du service rendu</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="houseshares__houseshareid__achieved_services__achievedserviceid__download_image_get"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent">/houseshares/{houseshareId}/achieved-services/{achievedserviceId}</span>/download-image</h4></div><div class="modal-body"><div class="alert alert-info"><p>Recupère l&#39;image du service rendu</p></div><ul class="nav nav-tabs"><li class="active"><a href="#houseshares__houseshareid__achieved_services__achievedserviceid__download_image_get_request" data-toggle="tab">Request</a></li><li><a href="#houseshares__houseshareid__achieved_services__achievedserviceid__download_image_get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="houseshares__houseshareid__achieved_services__achievedserviceid__download_image_get_request"><h3>URI Parameters</h3><ul><li><strong>houseshareId</strong>: <em><span class="required">required</span>(string)</em></li><li><strong>achievedserviceId</strong>: <em><span class="required">required</span>(string)</em></li></ul><h3>Headers</h3><ul><li><strong>Special token</strong>: <em><span class="required">required</span>(string)</em></li></ul></div><div class="tab-pane" id="houseshares__houseshareid__achieved_services__achievedserviceid__download_image_get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: image/png</p><h2>HTTP status code <a href="http://httpstatus.es/401" target="_blank">401</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>Le mauvais jeton</code></pre></div><h2>HTTP status code <a href="http://httpstatus.es/404" target="_blank">404</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: text/html</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>L&#39;entité n&#39;est pas trouvé</code></pre></div></div></div></div></div></div></div></div></div></div></div></div><div class="col-md-3"><div id="sidebar" class="hidden-print affix" role="complementary"><ul class="nav nav-pills nav-stacked"><li><a href="#login">/login</a></li><li><a href="#signup">/signup</a></li><li><a href="#whoami">/whoami</a></li><li><a href="#houseshares">/houseshares</a></li></ul></div></div></div></div></body></html>

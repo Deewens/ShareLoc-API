@@ -10,7 +10,6 @@ import shareloc.model.dao.AchievedServiceDAO;
 import shareloc.model.dao.HouseshareDAO;
 import shareloc.model.dao.ServiceDAO;
 import shareloc.model.dao.UserDAO;
-import shareloc.model.ejb.AchievedService;
 import shareloc.model.ejb.Houseshare;
 import shareloc.model.ejb.User;
 import shareloc.model.validation.ValidationErrorResponse;
@@ -39,10 +38,14 @@ public class HouseshareRessource {
     @Inject
     private AchievedServiceDAO achievedServiceDAO;
 
-    // Cherche la liste des co-locations de l'utilisateur
+    /**
+     * Récupère la liste de toutes les colocations dont le membre est l'utilisateur connecté
+     *
+     * @return liste des collocations créées
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getHouseshare() {
+    public Response getHouseshares() {
         Optional<User> user = userDAO.findByPseudo(securityContext.getUserPrincipal().getName());
 
         if (user.isPresent()) {
@@ -54,7 +57,12 @@ public class HouseshareRessource {
 
     }
 
-    // Cherche une co-location par son ID si l'utilsateur est dedans
+    /**
+     * Cherche une co-location par son ID si l'utilsateur est dedans
+     *
+     * @param id
+     * @return L'entité Houseshare
+     */
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -116,6 +124,12 @@ public class HouseshareRessource {
         }
     }
 
+    /**
+     * Met à jour (complétement ou partiellement) la colocation d'id
+     *
+     * @param id
+     * @return l'entité Houseshare qui a été modifiée.
+     */
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -147,6 +161,12 @@ public class HouseshareRessource {
 
     }
 
+    /**
+     * Supprime la colocation d'id
+     *
+     * @param id
+     * @return NO_CONTENT response
+     */
     @DELETE
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -170,7 +190,12 @@ public class HouseshareRessource {
     }
 
 
-    // Houseshare members
+    /**
+     * Cherche tous les membres de la colocation d'id
+     *
+     * @param id
+     * @return La liste de tous les membres
+     */
     @GET
     @Path("/{id}/users")
     @Produces(MediaType.APPLICATION_JSON)
@@ -191,6 +216,13 @@ public class HouseshareRessource {
 
     }
 
+    /**
+     * Ajout des nouveaux membres dans la colocation d'id
+     *
+     * @param id
+     * @param userParam L'utilisateur à ajouter dans la collocation
+     * @return La liste des tous les utilisateurs de la collocation
+     */
     @POST
     @Path("/{id}/users/")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -235,6 +267,13 @@ public class HouseshareRessource {
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
 
+    /**
+     * Supprime le membre de la colocation d'id
+     *
+     * @param houseshareId L'id de la colocation
+     * @param userId L'id de l'utilisateur
+     * @return La liste de tous les utilisateurs de la collocation
+     */
     @DELETE
     @Path("/{houseshareId}/users/{userId}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -284,6 +323,11 @@ public class HouseshareRessource {
     }
 
 
+    /**
+     * Récupère les points d'utilisateur connecté
+     *
+     * @return le nombre de points
+     */
     @GET
     @Path("/{houseshareId}/myPoints")
     @Produces(MediaType.APPLICATION_JSON)
@@ -291,6 +335,11 @@ public class HouseshareRessource {
         return null;
     }
 
+    /**
+     * Récupère les points d'utilisateur d'id
+     *
+     * @return le nombre de points
+     */
     @GET
     @Path("/{houseshareId}/points")
     @Produces(MediaType.APPLICATION_JSON)

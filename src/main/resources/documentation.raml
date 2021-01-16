@@ -1,0 +1,1790 @@
+#%RAML 1.0
+title: Shareloc (Alabic-Dudon)
+baseUri: https://cdad151.iutrs.unistra.fr:8080/ShareLoc-API-1.0-SNAPSHOT/api/
+version: 1
+mediaType: "application/json"
+
+types:
+  User:
+    type: object
+    properties:
+        userId: integer
+        pseudo: string
+        email: string
+        firstname: string
+        lastname: string
+        salt: string
+  UserWithPassword:
+    type: User
+    properties:
+      password: string
+  UserWithToken:
+    type: User
+    properties:
+      token: string
+  Users:
+    type: User[]
+  Houseshare:
+      type: object
+      properties:
+        houseshareId: integer
+        name: string
+        manager: User
+        users: Users
+  Houseshares:
+    type: Houseshare[]
+
+  Service:
+    type: object
+    properties:
+      serviceId: integer
+      houseshare: Houseshare
+      title: string
+      description: string
+      cost: integer
+      status: integer
+  Services:
+    type: Service[]
+
+  AchievedService:
+    type: object
+    properties:
+      achievedServiceId: integer
+      service: Service
+      houseshare: Houseshare
+      from: User
+      to: User
+      date: date-only
+      picture: string
+      valid: boolean
+
+  Message:
+    type: object
+    properties:
+      messageId: integer
+      houseshare: Houseshare
+      user: User
+      messageContent: string
+      messageDate: date-only
+
+  VoteService:
+    type: object
+    properties:
+      voteServiceId: integer
+      voter: User
+      service: Service
+      voteType: integer
+      vote: boolean
+      
+/login:
+  post:
+    description: Connexion d'un utlisateur
+    body:
+      application/json:
+        type: json
+        example: |
+          {
+          	"email": "alabic@gmail.com",
+          	"password": "12345678"
+          }
+    responses:
+      200:
+        body:
+          application/json:
+            type: json
+            example: |
+              {
+                "user": {
+                  "email": "alabic@gmail.com",
+                  "firstname": "Nemanja",
+                  "lastname": "Alabic",
+                  "pseudo": "alabic",
+                  "userId": 1
+                },
+                "token": "eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJhbGFiaWMifQ.Q-Sozimkrlepl9rVggcOFEOSq6KcRDWv42PINwkH7B2827uJLTeeGBdtqD68SCywR-EH-MXYDZoA8E9G0cztTpvrbQgl2kozxLgm_ZlWczKJ7epg9hSqyAncHepLwm2eCYKWWpdLzXyiArXpVMSwc6PNsgXhj7lowswlH8WHEapCW6UNNHEd6QKAfzvDDi6LSXp8_hDgBanErQVX3cUi_WCh_N02c1CaVEivPYC3zMGGw1piTHqcAjXyrsy3CrnGP2KvbJLm-xK3erC5zMQE03hCEThN8g124k2BIBdf-dYSRtacKaUWihF6MwMqnTozAsT0tpzAVYK40aWEMF_QsQ"
+              }
+      401:
+        body:
+          application/json:
+            type: json
+            example: |
+              {
+                "code": "UNAUTHORIZED_ERROR",
+                "type": "link",
+                "title": "Credential errors",
+                "message": "Email or password does not match with an existing user."
+              }
+/signup:
+  post:
+    description: Inscription d'un utlisateur
+    body:
+      application/json:
+        type: json
+        example: |
+          {
+          	"email": "alabic@gmail.com",
+          	"password": "12345678",
+          	"pseudo": "alabic",
+          	"firstname": "Nemanja",
+          	"lastname": "Alabic"
+          }
+    responses:
+      201:
+        body:
+          application/json:
+            type: json
+            example: |
+              {
+                "email": "alabic@gmail.com",
+                "firstname": "Nemanja",
+                "lastname": "Alabic",
+                "pseudo": "alabic",
+                "userId": 1
+              }
+      422:
+        body:
+          application/json:
+            type: json
+            example: |
+              {
+                "errors": [
+                  {
+                    "code": "ALREADY_EXIST",
+                    "field": "email",
+                    "message": "email already exist in database",
+                    "value": "alabic@gmail.com"
+                  },
+                  {
+                    "code": "ALREADY_EXIST",
+                    "field": "pseudo",
+                    "message": "pseudo already exist in database",
+                    "value": "alabic"
+                  }
+                ],
+                "title": "Validation error",
+                "type": "url"
+              }
+
+/whoami:
+  get:
+    description: Récupération du user grâce au token
+    headers:
+      Special token: string
+    responses:
+      200:
+        body:
+          application/json:
+            type: json
+            example: |
+              {
+                "email": "alabic@gmail.com",
+                "firstname": "Nemanja",
+                "lastname": "Alabic",
+                "pseudo": "alabic",
+                "userId": 1
+              }
+      401:
+        body:
+          type: text/html
+          example:
+            Le mauvais jeton
+
+/houseshares:
+  get:
+    description: Récupère la liste de toutes les colocations dont le membre est l'utilisateur connecté
+    headers:
+      Special token: string
+    responses:
+      200:
+        body:
+          application/json:
+            type: json
+            example: |
+              [
+                {
+                  "houseshareId": 1,
+                  "manager": {
+                    "email": "alabic@gmail.com",
+                    "firstname": "Nemanja",
+                    "lastname": "Alabic",
+                    "password": "5M1fLvc3giVexu+dLEQKIYS+c9FpnXIp3rq2Ck0B9Ic=",
+                    "pseudo": "alabic",
+                    "salt": "SD8eNjaBXeBaXuLpPEOuyGTJuo34Vb",
+                    "userId": 1
+                  },
+                  "name": "First houseshare",
+                  "users": [
+                    {
+                      "email": "alabic@gmail.com",
+                      "firstname": "Nemanja",
+                      "lastname": "Alabic",
+                      "password": "5M1fLvc3giVexu+dLEQKIYS+c9FpnXIp3rq2Ck0B9Ic=",
+                      "pseudo": "alabic",
+                      "salt": "SD8eNjaBXeBaXuLpPEOuyGTJuo34Vb",
+                      "userId": 1
+                    }
+                  ]
+                },
+                {
+                  "houseshareId": 2,
+                  "manager": {
+                    "email": "alabic@gmail.com",
+                    "firstname": "Nemanja",
+                    "lastname": "Alabic",
+                    "password": "5M1fLvc3giVexu+dLEQKIYS+c9FpnXIp3rq2Ck0B9Ic=",
+                    "pseudo": "alabic",
+                    "salt": "SD8eNjaBXeBaXuLpPEOuyGTJuo34Vb",
+                    "userId": 1
+                  },
+                  "name": "Second houseshare",
+                  "users": [
+                    {
+                      "email": "alabic@gmail.com",
+                      "firstname": "Nemanja",
+                      "lastname": "Alabic",
+                      "password": "5M1fLvc3giVexu+dLEQKIYS+c9FpnXIp3rq2Ck0B9Ic=",
+                      "pseudo": "alabic",
+                      "salt": "SD8eNjaBXeBaXuLpPEOuyGTJuo34Vb",
+                      "userId": 1
+                    }
+                  ]
+                }
+              ]
+      401:
+        body:
+          type: text/html
+          example:
+            Le mauvais jeton
+  post:
+    description: Crée une co-location vide
+    headers:
+      Special token: string
+    body:
+      application/json:
+        type: json
+        example: |
+          {
+            "name": "Third houseshare"
+          }
+    responses:
+      201:
+        body:
+          application/json:
+            type: json
+            example: |
+              {
+                "houseshareId": 3,
+                "manager": {
+                  "email": "alabic@gmail.com",
+                  "firstname": "Nemanja",
+                  "lastname": "Alabic",
+                  "password": "5M1fLvc3giVexu+dLEQKIYS+c9FpnXIp3rq2Ck0B9Ic=",
+                  "pseudo": "alabic",
+                  "salt": "SD8eNjaBXeBaXuLpPEOuyGTJuo34Vb",
+                  "userId": 1
+                },
+                "name": "Third houseshare",
+                "users": [
+                  {
+                    "email": "alabic@gmail.com",
+                    "firstname": "Nemanja",
+                    "lastname": "Alabic",
+                    "password": "5M1fLvc3giVexu+dLEQKIYS+c9FpnXIp3rq2Ck0B9Ic=",
+                    "pseudo": "alabic",
+                    "salt": "SD8eNjaBXeBaXuLpPEOuyGTJuo34Vb",
+                    "userId": 1
+                  }
+                ]
+              }
+      401:
+        body:
+          type: text/html
+          example:
+            Le mauvais jeton
+      422:
+        body:
+          application/json:
+            type: json
+            example: |
+              {
+                "errors": [
+                  {
+                    "code": "ALREADY_EXIST",
+                    "field": "name",
+                    "message": "name already exist in database",
+                    "value": "Third houseshare"
+                  }
+                ],
+                "title": "Validation error",
+                "type": "url"
+              }
+
+  /{houseshareId}:
+    get:
+      description: Cherche une co-location par son ID si l'utilsateur est dedans
+      headers:
+        Special token: string
+      responses:
+        200:
+          body:
+            application/json:
+              type: json
+              example: |
+                {
+                  "houseshareId": 1,
+                  "manager": {
+                    "email": "alabic@gmail.com",
+                    "firstname": "Nemanja",
+                    "lastname": "Alabic",
+                    "password": "5M1fLvc3giVexu+dLEQKIYS+c9FpnXIp3rq2Ck0B9Ic=",
+                    "pseudo": "alabic",
+                    "salt": "SD8eNjaBXeBaXuLpPEOuyGTJuo34Vb",
+                    "userId": 1
+                  },
+                  "name": "First houseshare",
+                  "users": [
+                    {
+                      "email": "alabic@gmail.com",
+                      "firstname": "Nemanja",
+                      "lastname": "Alabic",
+                      "password": "5M1fLvc3giVexu+dLEQKIYS+c9FpnXIp3rq2Ck0B9Ic=",
+                      "pseudo": "alabic",
+                      "salt": "SD8eNjaBXeBaXuLpPEOuyGTJuo34Vb",
+                      "userId": 1
+                    }
+                  ]
+                }
+        401:
+          body:
+            type: text/html
+            example:
+              Le mauvais jeton
+        404:
+          body:
+            type: text/html
+            example:
+              L'entité n'est pas trouvé
+
+    put:
+      description: Met à jour (complétement ou partiellement) la colocation d'id
+      headers:
+        Special token: string
+      body:
+        application/json:
+          type: json
+          example: |
+            {
+                "name": "Fourth houseshare"
+            }
+      responses:
+        200:
+          body:
+            application/json:
+              type: json
+              example: |
+                {
+                  "houseshareId": 3,
+                  "manager": {
+                    "email": "alabic@gmail.com",
+                    "firstname": "Nemanja",
+                    "lastname": "Alabic",
+                    "password": "5M1fLvc3giVexu+dLEQKIYS+c9FpnXIp3rq2Ck0B9Ic=",
+                    "pseudo": "alabic",
+                    "salt": "SD8eNjaBXeBaXuLpPEOuyGTJuo34Vb",
+                    "userId": 1
+                  },
+                  "name": "Fourth houseshare",
+                  "users": [
+                    {
+                      "email": "alabic@gmail.com",
+                      "firstname": "Nemanja",
+                      "lastname": "Alabic",
+                      "password": "5M1fLvc3giVexu+dLEQKIYS+c9FpnXIp3rq2Ck0B9Ic=",
+                      "pseudo": "alabic",
+                      "salt": "SD8eNjaBXeBaXuLpPEOuyGTJuo34Vb",
+                      "userId": 1
+                    }
+                  ]
+                }
+        401:
+          body:
+            type: text/html
+            example:
+              Le mauvais jeton
+        404:
+          body:
+            type: text/html
+            example:
+              L'entité n'est pas trouvé
+        422:
+          body:
+            application/json:
+              type: json
+              example: |
+                {
+                  "errors": [
+                    {
+                      "code": "ALREADY_EXIST",
+                      "field": "name",
+                      "message": "name already exist in database",
+                      "value": "Third houseshare"
+                    }
+                  ],
+                  "title": "Validation error",
+                  "type": "url"
+                }
+
+    delete:
+      description: Supprime la colocation d'id
+      headers:
+        Special token: string
+      responses:
+        204:
+        401:
+          body:
+            type: text/html
+            example:
+              Le mauvais jeton
+        404:
+          body:
+            type: text/html
+            example:
+              L'entité n'est pas trouvé
+
+    /users:
+      get:
+        description: Cherche tous les membres de la colocation d'id
+        headers:
+          Special token: string
+        responses:
+          200:
+            body:
+              application/json:
+                type: json
+                example: |
+                  [
+                    {
+                      "email": "alabic@gmail.com",
+                      "firstname": "Nemanja",
+                      "lastname": "Alabic",
+                      "password": "5M1fLvc3giVexu+dLEQKIYS+c9FpnXIp3rq2Ck0B9Ic=",
+                      "pseudo": "alabic",
+                      "salt": "SD8eNjaBXeBaXuLpPEOuyGTJuo34Vb",
+                      "userId": 1
+                    },
+                    {
+                      "email": "nemanja@gmail.com",
+                      "firstname": "Nemanja",
+                      "lastname": "Alabic",
+                      "password": "MqhJj74yPns73nE7Q2pZycPYE44JZnlNYLAmm0TFQNY=",
+                      "pseudo": "nemanja",
+                      "salt": "GxSsK3mlsJTTlaGkxTdydDr68ushPd",
+                      "userId": 3
+                    }
+                  ]
+          401:
+            body:
+              type: text/html
+              example:
+                Le mauvais jeton
+          404:
+            body:
+              type: text/html
+              example:
+                L'entité n'est pas trouvé
+
+      post:
+        description: Cherche tous les membres de la colocation d'id
+        headers:
+          Special token: string
+        body:
+          application/json:
+            type: json
+            example: |
+              {
+                "email": "alabic@gmail.com",
+                "firstname": "Nemanja",
+                "lastname": "Alabic",
+                "pseudo": "alabic",
+                "userId": 1
+              }
+        responses:
+          201:
+            body:
+              application/json:
+                type: json
+                example: |
+                  [
+                    {
+                      "email": "alabic@gmail.com",
+                      "firstname": "Nemanja",
+                      "lastname": "Alabic",
+                      "password": "5M1fLvc3giVexu+dLEQKIYS+c9FpnXIp3rq2Ck0B9Ic=",
+                      "pseudo": "alabic",
+                      "salt": "SD8eNjaBXeBaXuLpPEOuyGTJuo34Vb",
+                      "userId": 1
+                    },
+                    {
+                      "email": "deewens@gmail.com",
+                      "firstname": "Adrien",
+                      "lastname": "Dudon",
+                      "password": "Rl95sSNooMSF87G8abbDA48cDQshBwLNlxAHoH5wf5U=",
+                      "pseudo": "deewens",
+                      "salt": "XDjKfIFxfNibCz7Ir3YMbBKIc24k3C",
+                      "userId": 2
+                    },
+                    {
+                      "email": "nemanja@gmail.com",
+                      "firstname": "Nemanja",
+                      "lastname": "Alabic",
+                      "password": "wHXBj6Gco8nInajL7BxvIxQbpWG+JReygngz+8yTkVk=",
+                      "pseudo": "nemanja",
+                      "salt": "gbZaLbiqzBk3UOLHQJqooB0Z9WelNc",
+                      "userId": 4
+                    }
+                  ]
+          400:
+            body:
+              type: json
+              example:
+                L'entité existe déjà
+          401:
+            body:
+              type: text/html
+              example:
+                Le mauvais jeton
+          404:
+            body:
+              type: text/html
+              example:
+                L'entité n'est pas trouvé
+
+      /{userId}:
+        delete:
+          description: Supprime le membre de la colocation d'id
+          headers:
+            Special token: string
+          responses:
+            200:
+              body:
+                application/json:
+                  type: json
+                  example: |
+                    [
+                      {
+                        "email": "alabic@gmail.com",
+                        "firstname": "Nemanja",
+                        "lastname": "Alabic",
+                        "password": "5M1fLvc3giVexu+dLEQKIYS+c9FpnXIp3rq2Ck0B9Ic=",
+                        "pseudo": "alabic",
+                        "salt": "SD8eNjaBXeBaXuLpPEOuyGTJuo34Vb",
+                        "userId": 1
+                      },
+                      {
+                        "email": "deewens@gmail.com",
+                        "firstname": "Adrien",
+                        "lastname": "Dudon",
+                        "password": "Rl95sSNooMSF87G8abbDA48cDQshBwLNlxAHoH5wf5U=",
+                        "pseudo": "deewens",
+                        "salt": "XDjKfIFxfNibCz7Ir3YMbBKIc24k3C",
+                        "userId": 2
+                      }
+                    ]
+            401:
+              body:
+                type: text/html
+                example:
+                  Le mauvais jeton
+            404:
+              body:
+                type: text/html
+                example:
+                  L'entité n'est pas trouvé
+
+    /points:
+      get:
+        description: Récupère les points d'utilisateur d'id
+        headers:
+          Special token: string
+        queryParameters:
+          id?:
+            description: L'utilisateur d'id
+            type: User
+        responses:
+          200:
+            body:
+              application/json:
+                type: json
+                example: |
+                  {
+                    "points": 75
+                  }
+          401:
+            body:
+              type: text/html
+              example:
+                Le mauvais jeton
+          404:
+            body:
+              type: text/html
+              example:
+                L'entité n'est pas trouvé
+
+    /messages:
+      get:
+        description: Récupère les messages de collocation d'id
+        headers:
+          Special token: string
+        responses:
+          200:
+            body:
+              application/json:
+                type: json
+                example: |
+                  {
+                    "houseshare": {
+                      "houseshareId": 1,
+                      "manager": {
+                        "email": "alabic@gmail.com",
+                        "firstname": "Nemanja",
+                        "lastname": "Alabic",
+                        "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                        "pseudo": "alabic",
+                        "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                        "userId": 1
+                      },
+                      "name": "First houseshare",
+                      "users": [
+                        {
+                          "email": "alabic@gmail.com",
+                          "firstname": "Nemanja",
+                          "lastname": "Alabic",
+                          "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                          "pseudo": "alabic",
+                          "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                          "userId": 1
+                        }
+                      ]
+                    },
+                    "messageContent": "First message",
+                    "messageDate": "2021-01-16T00:01:37.619Z[UTC]",
+                    "messageId": 1,
+                    "user": {
+                      "email": "alabic@gmail.com",
+                      "firstname": "Nemanja",
+                      "lastname": "Alabic",
+                      "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                      "pseudo": "alabic",
+                      "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                      "userId": 1
+                    }
+                  }
+          204:
+          401:
+            body:
+              type: text/html
+              example:
+                Le mauvais jeton
+          404:
+            body:
+              type: text/html
+              example:
+                L'entité n'est pas trouvé
+      post:
+        description: Crée nouveau message
+        headers:
+          Special token: string
+        body:
+          application/json:
+            type: json
+            example: |
+              {
+                "messageContent": "First message"
+              }
+        responses:
+          200:
+            body:
+              application/json:
+                type: json
+                example: |
+                  {
+                    "houseshare": {
+                      "houseshareId": 1,
+                      "manager": {
+                        "email": "alabic@gmail.com",
+                        "firstname": "Nemanja",
+                        "lastname": "Alabic",
+                        "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                        "pseudo": "alabic",
+                        "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                        "userId": 1
+                      },
+                      "name": "First houseshare",
+                      "users": [
+                        {
+                          "email": "alabic@gmail.com",
+                          "firstname": "Nemanja",
+                          "lastname": "Alabic",
+                          "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                          "pseudo": "alabic",
+                          "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                          "userId": 1
+                        }
+                      ]
+                    },
+                    "messageContent": "First message",
+                    "messageDate": "2021-01-16T00:01:37.619Z[UTC]",
+                    "messageId": 1,
+                    "user": {
+                      "email": "alabic@gmail.com",
+                      "firstname": "Nemanja",
+                      "lastname": "Alabic",
+                      "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                      "pseudo": "alabic",
+                      "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                      "userId": 1
+                    }
+                  }
+          401:
+            body:
+              type: text/html
+              example:
+                Le mauvais jeton
+          404:
+            body:
+              type: text/html
+              example:
+                L'entité n'est pas trouvé
+
+    /services:
+      get:
+        description: Récupère la liste de tous les services
+        headers:
+          Special token: string
+        responses:
+          200:
+            body:
+              application/json:
+                type: json
+                example: |
+                  [
+                    {
+                      "cost": 100,
+                      "description": "Aller refaire tout",
+                      "houseshare": {
+                        "houseshareId": 1,
+                        "manager": {
+                          "email": "alabic@gmail.com",
+                          "firstname": "Nemanja",
+                          "lastname": "Alabic",
+                          "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                          "pseudo": "alabic",
+                          "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                          "userId": 1
+                        },
+                        "name": "First houseshare",
+                        "users": [
+                          {
+                            "email": "alabic@gmail.com",
+                            "firstname": "Nemanja",
+                            "lastname": "Alabic",
+                            "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                            "pseudo": "alabic",
+                            "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                            "userId": 1
+                          }
+                        ]
+                      },
+                      "serviceId": 1,
+                      "status": 2,
+                      "title": "Faire le menage"
+                    },
+                    {
+                      "cost": 50,
+                      "description": "Remplir le frigo!",
+                      "houseshare": {
+                        "houseshareId": 1,
+                        "manager": {
+                          "email": "alabic@gmail.com",
+                          "firstname": "Nemanja",
+                          "lastname": "Alabic",
+                          "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                          "pseudo": "alabic",
+                          "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                          "userId": 1
+                        },
+                        "name": "First houseshare",
+                        "users": [
+                          {
+                            "email": "alabic@gmail.com",
+                            "firstname": "Nemanja",
+                            "lastname": "Alabic",
+                            "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                            "pseudo": "alabic",
+                            "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                            "userId": 1
+                          }
+                        ]
+                      },
+                      "serviceId": 2,
+                      "status": 2,
+                      "title": "Faire des courses"
+                    }
+                  ]
+          401:
+            body:
+              type: text/html
+              example:
+                Le mauvais jeton
+          404:
+            body:
+              type: text/html
+              example:
+                L'entité n'est pas trouvé
+
+      post:
+        description: Créer un service
+        headers:
+          Special token: string
+        body:
+          application/json:
+            type: json
+            example: |
+              {
+                "houseShareId": 1,
+                "userId": 1,
+                "title": "Faire le menage",
+                "cost": 100,
+                "description": "Aller refaire tout",
+                "status": 0
+              }
+        responses:
+          200:
+            body:
+              application/json:
+                type: json
+                example: |
+                  {
+                    "cost": 100,
+                    "description": "Aller refaire tout",
+                    "houseshare": {
+                      "houseshareId": 1,
+                      "manager": {
+                        "email": "alabic@gmail.com",
+                        "firstname": "Nemanja",
+                        "lastname": "Alabic",
+                        "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                        "pseudo": "alabic",
+                        "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                        "userId": 1
+                      },
+                      "name": "First houseshare",
+                      "users": [
+                        {
+                          "email": "alabic@gmail.com",
+                          "firstname": "Nemanja",
+                          "lastname": "Alabic",
+                          "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                          "pseudo": "alabic",
+                          "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                          "userId": 1
+                        }
+                      ]
+                    },
+                    "serviceId": 1,
+                    "status": 2,
+                    "title": "Faire le menage"
+                  }
+          401:
+            body:
+              type: text/html
+              example:
+                Le mauvais jeton
+          404:
+            body:
+              type: text/html
+              example:
+                L'entité n'est pas trouvé
+
+      /{serviceId}:
+        get:
+          description: Récupère le service d'id
+          headers:
+            Special token: string
+          responses:
+            200:
+              body:
+                application/json:
+                  type: json
+                  example: |
+                    {
+                      "cost": 100,
+                      "description": "Aller refaire tout",
+                      "houseshare": {
+                        "houseshareId": 1,
+                        "manager": {
+                          "email": "alabic@gmail.com",
+                          "firstname": "Nemanja",
+                          "lastname": "Alabic",
+                          "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                          "pseudo": "alabic",
+                          "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                          "userId": 1
+                        },
+                        "name": "First houseshare",
+                        "users": [
+                          {
+                            "email": "alabic@gmail.com",
+                            "firstname": "Nemanja",
+                            "lastname": "Alabic",
+                            "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                            "pseudo": "alabic",
+                            "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                            "userId": 1
+                          }
+                        ]
+                      },
+                      "serviceId": 1,
+                      "status": 2,
+                      "title": "Faire le menage"
+                    }
+            401:
+              body:
+                type: text/html
+                example:
+                  Le mauvais jeton
+            404:
+              body:
+                type: text/html
+                example:
+                  L'entité n'est pas trouvé
+        put:
+          description: Met à jour (complétement ou partiellement) le service d'id {id}
+          headers:
+            Special token: string
+          body:
+            application/json:
+              type: json
+              example: |
+                {
+                	"houseShareId": 1,
+                    "userId": 1,
+                	"title": "Faire des courses",
+                	"cost": 50,
+                	"description": "Remplir le frigo completement !!!",
+                	"status": 2
+                }
+          responses:
+            200:
+              body:
+                application/json:
+                  type: json
+                  example: |
+                    {
+                      "cost": 50,
+                      "description": "Remplir le frigo completement !!!",
+                      "houseshare": {
+                        "houseshareId": 1,
+                        "manager": {
+                          "email": "alabic@gmail.com",
+                          "firstname": "Nemanja",
+                          "lastname": "Alabic",
+                          "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                          "pseudo": "alabic",
+                          "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                          "userId": 1
+                        },
+                        "name": "First houseshare",
+                        "users": [
+                          {
+                            "email": "alabic@gmail.com",
+                            "firstname": "Nemanja",
+                            "lastname": "Alabic",
+                            "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                            "pseudo": "alabic",
+                            "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                            "userId": 1
+                          }
+                        ]
+                      },
+                      "serviceId": 2,
+                      "status": 2,
+                      "title": "Faire des courses"
+                    }
+            400:
+              body:
+                type: json
+                example: |
+                  {
+                    "code": "BAD_FORMAT",
+                    "type": "link",
+                    "title": "Bad service status",
+                    "message": "The service status should be 2 or 3."
+                  }
+            401:
+              body:
+                type: text/html
+                example:
+                  Le mauvais jeton
+            404:
+              body:
+                type: text/html
+                example:
+                  L'entité n'est pas trouvé
+            422:
+              body:
+                application/json:
+                  type: json
+                  example: |
+                    {
+                      "errors": [
+                        {
+                          "code": "FIELD_NULL",
+                          "field": "description",
+                          "message": "description must not be null"
+                        },
+                        {
+                          "code": "FIELD_BLANK",
+                          "field": "title",
+                          "message": "title must not be blank"
+                        },
+                        {
+                          "code": "FIELD_NULL",
+                          "field": "status",
+                          "message": "status must not be null"
+                        },
+                        {
+                          "code": "FIELD_NULL",
+                          "field": "cost",
+                          "message": "cost must not be null"
+                        }
+                      ],
+                      "title": "Validation error",
+                      "type": "url"
+                    }
+
+        delete:
+          description: Supprime le service d'id
+          headers:
+            Special token: string
+          responses:
+            204:
+            401:
+              body:
+                type: text/html
+                example:
+                  Le mauvais jeton
+            404:
+              body:
+                type: text/html
+                example:
+                  L'entité n'est pas trouvé
+
+    /voteservice:
+      /{serviceId}:
+        get:
+          description: Récupère tous les votes d'un service de la collocation d'id
+          headers:
+            Special token: string
+          responses:
+            201:
+              body:
+                application/json:
+                  type: json
+                  example: |
+                    [
+                      {
+                        "service": {
+                          "cost": 100,
+                          "description": "Aller refaire tout",
+                          "houseshare": {
+                            "houseshareId": 1,
+                            "manager": {
+                              "email": "alabic@gmail.com",
+                              "firstname": "Nemanja",
+                              "lastname": "Alabic",
+                              "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                              "pseudo": "alabic",
+                              "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                              "userId": 1
+                            },
+                            "name": "First houseshare",
+                            "users": [
+                              {
+                                "email": "alabic@gmail.com",
+                                "firstname": "Nemanja",
+                                "lastname": "Alabic",
+                                "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                                "pseudo": "alabic",
+                                "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                                "userId": 1
+                              },
+                              {
+                                "email": "deewens@gmail.com",
+                                "firstname": "Adrien",
+                                "lastname": "Dudon",
+                                "password": "do5Cp3EEAcAkHrnJZZ3xjmZzDmVjxPpHNV83AG4M3pI=",
+                                "pseudo": "deewens",
+                                "salt": "WuIk9IFeKYM9X2XJwzS0Wqn2Cp46xP",
+                                "userId": 2
+                              }
+                            ]
+                          },
+                          "serviceId": 1,
+                          "status": 2,
+                          "title": "Faire le menage"
+                        },
+                        "vote": false,
+                        "voteServiceId": 1,
+                        "voteType": 2,
+                        "voter": {
+                          "email": "alabic@gmail.com",
+                          "firstname": "Nemanja",
+                          "lastname": "Alabic",
+                          "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                          "pseudo": "alabic",
+                          "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                          "userId": 1
+                        }
+                      },
+                      {
+                        "service": {
+                          "cost": 100,
+                          "description": "Aller refaire tout",
+                          "houseshare": {
+                            "houseshareId": 1,
+                            "manager": {
+                              "email": "alabic@gmail.com",
+                              "firstname": "Nemanja",
+                              "lastname": "Alabic",
+                              "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                              "pseudo": "alabic",
+                              "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                              "userId": 1
+                            },
+                            "name": "First houseshare",
+                            "users": [
+                              {
+                                "email": "alabic@gmail.com",
+                                "firstname": "Nemanja",
+                                "lastname": "Alabic",
+                                "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                                "pseudo": "alabic",
+                                "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                                "userId": 1
+                              },
+                              {
+                                "email": "deewens@gmail.com",
+                                "firstname": "Adrien",
+                                "lastname": "Dudon",
+                                "password": "do5Cp3EEAcAkHrnJZZ3xjmZzDmVjxPpHNV83AG4M3pI=",
+                                "pseudo": "deewens",
+                                "salt": "WuIk9IFeKYM9X2XJwzS0Wqn2Cp46xP",
+                                "userId": 2
+                              }
+                            ]
+                          },
+                          "serviceId": 1,
+                          "status": 2,
+                          "title": "Faire le menage"
+                        },
+                        "vote": true,
+                        "voteServiceId": 2,
+                        "voteType": 2,
+                        "voter": {
+                          "email": "deewens@gmail.com",
+                          "firstname": "Adrien",
+                          "lastname": "Dudon",
+                          "password": "do5Cp3EEAcAkHrnJZZ3xjmZzDmVjxPpHNV83AG4M3pI=",
+                          "pseudo": "deewens",
+                          "salt": "WuIk9IFeKYM9X2XJwzS0Wqn2Cp46xP",
+                          "userId": 2
+                        }
+                      }
+                    ]
+            401:
+              body:
+                type: text/html
+                example:
+                  Le mauvais jeton
+            404:
+              body:
+                type: text/html
+                example:
+                  L'entité n'est pas trouvé
+
+        post:
+          description: Crée nouveau vote de service
+          headers:
+            Special token: string
+          body:
+            application/json:
+              type: json
+              example: |
+                {
+                  "voteType": "2",
+                  "vote": true
+                }
+          responses:
+            201:
+              body:
+                application/json:
+                  type: json
+                  example: |
+                    {
+                      "service": {
+                        "cost": 100,
+                        "description": "Aller refaire tout",
+                        "houseshare": {
+                          "houseshareId": 1,
+                          "manager": {
+                            "email": "alabic@gmail.com",
+                            "firstname": "Nemanja",
+                            "lastname": "Alabic",
+                            "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                            "pseudo": "alabic",
+                            "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                            "userId": 1
+                          },
+                          "name": "First houseshare",
+                          "users": [
+                            {
+                              "email": "alabic@gmail.com",
+                              "firstname": "Nemanja",
+                              "lastname": "Alabic",
+                              "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                              "pseudo": "alabic",
+                              "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                              "userId": 1
+                            },
+                            {
+                              "email": "deewens@gmail.com",
+                              "firstname": "Adrien",
+                              "lastname": "Dudon",
+                              "password": "do5Cp3EEAcAkHrnJZZ3xjmZzDmVjxPpHNV83AG4M3pI=",
+                              "pseudo": "deewens",
+                              "salt": "WuIk9IFeKYM9X2XJwzS0Wqn2Cp46xP",
+                              "userId": 2
+                            }
+                          ]
+                        },
+                        "serviceId": 1,
+                        "status": 2,
+                        "title": "Faire le menage"
+                      },
+                      "vote": true,
+                      "voteServiceId": 2,
+                      "voteType": 2,
+                      "voter": {
+                        "email": "deewens@gmail.com",
+                        "firstname": "Adrien",
+                        "lastname": "Dudon",
+                        "password": "do5Cp3EEAcAkHrnJZZ3xjmZzDmVjxPpHNV83AG4M3pI=",
+                        "pseudo": "deewens",
+                        "salt": "WuIk9IFeKYM9X2XJwzS0Wqn2Cp46xP",
+                        "userId": 2
+                      }
+                    }
+            401:
+              body:
+                type: text/html
+                example:
+                  Le mauvais jeton
+            404:
+              body:
+                type: text/html
+                example:
+                  L'entité n'est pas trouvé
+
+    /achieved-services:
+      get:
+        description: Récupère la liste de tous les services rendus
+        headers:
+          Special token: string
+        responses:
+          200:
+            body:
+              application/json:
+                type: json
+                example: |
+                  [
+                    {
+                      "achievedServiceId": 1,
+                      "date": "2020-12-30T23:00:00Z[UTC]",
+                      "from": {
+                        "email": "alabic@gmail.com",
+                        "firstname": "Nemanja",
+                        "lastname": "Alabic",
+                        "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                        "pseudo": "alabic",
+                        "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                        "userId": 1
+                      },
+                      "houseshare": {
+                        "houseshareId": 1,
+                        "manager": {
+                          "email": "alabic@gmail.com",
+                          "firstname": "Nemanja",
+                          "lastname": "Alabic",
+                          "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                          "pseudo": "alabic",
+                          "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                          "userId": 1
+                        },
+                        "name": "First houseshare",
+                        "users": [
+                          {
+                            "email": "alabic@gmail.com",
+                            "firstname": "Nemanja",
+                            "lastname": "Alabic",
+                            "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                            "pseudo": "alabic",
+                            "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                            "userId": 1
+                          },
+                          {
+                            "email": "deewens@gmail.com",
+                            "firstname": "Adrien",
+                            "lastname": "Dudon",
+                            "password": "do5Cp3EEAcAkHrnJZZ3xjmZzDmVjxPpHNV83AG4M3pI=",
+                            "pseudo": "deewens",
+                            "salt": "WuIk9IFeKYM9X2XJwzS0Wqn2Cp46xP",
+                            "userId": 2
+                          }
+                        ]
+                      },
+                      "picture": "",
+                      "service": {
+                        "cost": 80,
+                        "description": "test",
+                        "houseshare": {
+                          "houseshareId": 1,
+                          "manager": {
+                            "email": "alabic@gmail.com",
+                            "firstname": "Nemanja",
+                            "lastname": "Alabic",
+                            "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                            "pseudo": "alabic",
+                            "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                            "userId": 1
+                          },
+                          "name": "First houseshare",
+                          "users": [
+                            {
+                              "email": "alabic@gmail.com",
+                              "firstname": "Nemanja",
+                              "lastname": "Alabic",
+                              "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                              "pseudo": "alabic",
+                              "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                              "userId": 1
+                            },
+                            {
+                              "email": "deewens@gmail.com",
+                              "firstname": "Adrien",
+                              "lastname": "Dudon",
+                              "password": "do5Cp3EEAcAkHrnJZZ3xjmZzDmVjxPpHNV83AG4M3pI=",
+                              "pseudo": "deewens",
+                              "salt": "WuIk9IFeKYM9X2XJwzS0Wqn2Cp46xP",
+                              "userId": 2
+                            }
+                          ]
+                        },
+                        "serviceId": 3,
+                        "status": 1,
+                        "title": "ttt"
+                      },
+                      "to": {
+                        "email": "deewens@gmail.com",
+                        "firstname": "Adrien",
+                        "lastname": "Dudon",
+                        "password": "do5Cp3EEAcAkHrnJZZ3xjmZzDmVjxPpHNV83AG4M3pI=",
+                        "pseudo": "deewens",
+                        "salt": "WuIk9IFeKYM9X2XJwzS0Wqn2Cp46xP",
+                        "userId": 2
+                      },
+                      "valid": false
+                    }
+                  ]
+          401:
+            body:
+              type: text/html
+              example:
+                Le mauvais jeton
+          404:
+            body:
+              type: text/html
+              example:
+                L'entité n'est pas trouvé
+
+      post:
+        description: Créer le service rendu
+        headers:
+          Special token: string
+        body:
+          application/json:
+            type: json
+            example: |
+              {
+              	"service": 1,
+              	"beneficiaryId": "2",
+              	"serviceId": 3,
+              	"date": "2020-12-31"
+              }
+        responses:
+          201:
+            body:
+              application/json:
+                type: json
+                example: |
+                  {
+                    "achievedServiceId": 1,
+                    "date": "2020-12-30T23:00:00Z[UTC]",
+                    "from": {
+                      "email": "alabic@gmail.com",
+                      "firstname": "Nemanja",
+                      "lastname": "Alabic",
+                      "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                      "pseudo": "alabic",
+                      "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                      "userId": 1
+                    },
+                    "houseshare": {
+                      "houseshareId": 1,
+                      "manager": {
+                        "email": "alabic@gmail.com",
+                        "firstname": "Nemanja",
+                        "lastname": "Alabic",
+                        "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                        "pseudo": "alabic",
+                        "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                        "userId": 1
+                      },
+                      "name": "First houseshare",
+                      "users": [
+                        {
+                          "email": "alabic@gmail.com",
+                          "firstname": "Nemanja",
+                          "lastname": "Alabic",
+                          "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                          "pseudo": "alabic",
+                          "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                          "userId": 1
+                        },
+                        {
+                          "email": "deewens@gmail.com",
+                          "firstname": "Adrien",
+                          "lastname": "Dudon",
+                          "password": "do5Cp3EEAcAkHrnJZZ3xjmZzDmVjxPpHNV83AG4M3pI=",
+                          "pseudo": "deewens",
+                          "salt": "WuIk9IFeKYM9X2XJwzS0Wqn2Cp46xP",
+                          "userId": 2
+                        }
+                      ]
+                    },
+                    "picture": "",
+                    "service": {
+                      "cost": 80,
+                      "description": "Faire le menage",
+                      "houseshare": {
+                        "houseshareId": 1,
+                        "manager": {
+                          "email": "alabic@gmail.com",
+                          "firstname": "Nemanja",
+                          "lastname": "Alabic",
+                          "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                          "pseudo": "alabic",
+                          "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                          "userId": 1
+                        },
+                        "name": "First houseshare",
+                        "users": [
+                          {
+                            "email": "alabic@gmail.com",
+                            "firstname": "Nemanja",
+                            "lastname": "Alabic",
+                            "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                            "pseudo": "alabic",
+                            "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                            "userId": 1
+                          },
+                          {
+                            "email": "deewens@gmail.com",
+                            "firstname": "Adrien",
+                            "lastname": "Dudon",
+                            "password": "do5Cp3EEAcAkHrnJZZ3xjmZzDmVjxPpHNV83AG4M3pI=",
+                            "pseudo": "deewens",
+                            "salt": "WuIk9IFeKYM9X2XJwzS0Wqn2Cp46xP",
+                            "userId": 2
+                          }
+                        ]
+                      },
+                      "serviceId": 3,
+                      "status": 1,
+                      "title": "Faire le menage"
+                    },
+                    "to": {
+                      "email": "deewens@gmail.com",
+                      "firstname": "Adrien",
+                      "lastname": "Dudon",
+                      "password": "do5Cp3EEAcAkHrnJZZ3xjmZzDmVjxPpHNV83AG4M3pI=",
+                      "pseudo": "deewens",
+                      "salt": "WuIk9IFeKYM9X2XJwzS0Wqn2Cp46xP",
+                      "userId": 2
+                    },
+                    "valid": false
+                  }
+          401:
+            body:
+              type: text/html
+              example:
+                Le mauvais jeton
+          404:
+            body:
+              type: text/html
+              example:
+                L'entité n'est pas trouvé
+
+      /{achievedserviceId}:
+        get:
+          description: Récupère le service rendu d'id
+          headers:
+            Special token: string
+          responses:
+            200:
+              body:
+                application/json:
+                  type: json
+                  example: |
+                    {
+                      "achievedServiceId": 1,
+                      "date": "2020-12-30T23:00:00Z[UTC]",
+                      "from": {
+                        "email": "alabic@gmail.com",
+                        "firstname": "Nemanja",
+                        "lastname": "Alabic",
+                        "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                        "pseudo": "alabic",
+                        "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                        "userId": 1
+                      },
+                      "houseshare": {
+                        "houseshareId": 1,
+                        "manager": {
+                          "email": "alabic@gmail.com",
+                          "firstname": "Nemanja",
+                          "lastname": "Alabic",
+                          "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                          "pseudo": "alabic",
+                          "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                          "userId": 1
+                        },
+                        "name": "First houseshare",
+                        "users": [
+                          {
+                            "email": "alabic@gmail.com",
+                            "firstname": "Nemanja",
+                            "lastname": "Alabic",
+                            "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                            "pseudo": "alabic",
+                            "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                            "userId": 1
+                          },
+                          {
+                            "email": "deewens@gmail.com",
+                            "firstname": "Adrien",
+                            "lastname": "Dudon",
+                            "password": "do5Cp3EEAcAkHrnJZZ3xjmZzDmVjxPpHNV83AG4M3pI=",
+                            "pseudo": "deewens",
+                            "salt": "WuIk9IFeKYM9X2XJwzS0Wqn2Cp46xP",
+                            "userId": 2
+                          }
+                        ]
+                      },
+                      "picture": "",
+                      "service": {
+                        "cost": 80,
+                        "description": "test",
+                        "houseshare": {
+                          "houseshareId": 1,
+                          "manager": {
+                            "email": "alabic@gmail.com",
+                            "firstname": "Nemanja",
+                            "lastname": "Alabic",
+                            "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                            "pseudo": "alabic",
+                            "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                            "userId": 1
+                          },
+                          "name": "First houseshare",
+                          "users": [
+                            {
+                              "email": "alabic@gmail.com",
+                              "firstname": "Nemanja",
+                              "lastname": "Alabic",
+                              "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                              "pseudo": "alabic",
+                              "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                              "userId": 1
+                            },
+                            {
+                              "email": "deewens@gmail.com",
+                              "firstname": "Adrien",
+                              "lastname": "Dudon",
+                              "password": "do5Cp3EEAcAkHrnJZZ3xjmZzDmVjxPpHNV83AG4M3pI=",
+                              "pseudo": "deewens",
+                              "salt": "WuIk9IFeKYM9X2XJwzS0Wqn2Cp46xP",
+                              "userId": 2
+                            }
+                          ]
+                        },
+                        "serviceId": 3,
+                        "status": 1,
+                        "title": "ttt"
+                      },
+                      "to": {
+                        "email": "deewens@gmail.com",
+                        "firstname": "Adrien",
+                        "lastname": "Dudon",
+                        "password": "do5Cp3EEAcAkHrnJZZ3xjmZzDmVjxPpHNV83AG4M3pI=",
+                        "pseudo": "deewens",
+                        "salt": "WuIk9IFeKYM9X2XJwzS0Wqn2Cp46xP",
+                        "userId": 2
+                      },
+                      "valid": false
+                    }
+            401:
+              body:
+                type: text/html
+                example:
+                  Le mauvais jeton
+            404:
+              body:
+                type: text/html
+                example:
+                  L'entité n'est pas trouvé
+
+        /upload-image:
+          post:
+            description: Upload d'une image vers le serveur
+            headers:
+              Special token: string
+            body:
+              application/json:
+                type: image/png, image/jpeg
+            responses:
+              201:
+                body:
+                  application/json:
+                    type: json
+                    example: |
+                      {
+                          "achievedServiceId": 2,
+                          "date": "2020-12-30T23:00:00Z[UTC]",
+                          "from": {
+                              "email": "alabic@gmail.com",
+                              "firstname": "Nemanja",
+                              "lastname": "Alabic",
+                              "password": "ZamCC0Gmlr2ic190p5eiDHtI+5woDczJipU9oc//IJE=",
+                              "pseudo": "alabic",
+                              "salt": "8Rz4I6YDdtfeEMd9dj3sL7uQnxoqj9",
+                              "userId": 2
+                          },
+                          "houseshare": {
+                              "houseshareId": 1,
+                              "manager": {
+                                  "email": "alabic@gmail.com",
+                                  "firstname": "Nemanja",
+                                  "lastname": "Alabic",
+                                  "password": "ZamCC0Gmlr2ic190p5eiDHtI+5woDczJipU9oc//IJE=",
+                                  "pseudo": "alabic",
+                                  "salt": "8Rz4I6YDdtfeEMd9dj3sL7uQnxoqj9",
+                                  "userId": 2
+                              },
+                              "name": "First houseshare",
+                              "users": [
+                                  {
+                                      "email": "alabic@gmail.com",
+                                      "firstname": "Nemanja",
+                                      "lastname": "Alabic",
+                                      "password": "ZamCC0Gmlr2ic190p5eiDHtI+5woDczJipU9oc//IJE=",
+                                      "pseudo": "alabic",
+                                      "salt": "8Rz4I6YDdtfeEMd9dj3sL7uQnxoqj9",
+                                      "userId": 2
+                                  }
+                              ]
+                          },
+                          "picture": "http://localhost:8080/ShareLoc-API-1.0-SNAPSHOT/api/houseshares/1/achieved-services/2/download-image",
+                          "service": {
+                              "cost": 500,
+                              "description": "azeaze",
+                              "houseshare": {
+                                  "houseshareId": 1,
+                                  "manager": {
+                                      "email": "alabic@gmail.com",
+                                      "firstname": "Nemanja",
+                                      "lastname": "Alabic",
+                                      "password": "ZamCC0Gmlr2ic190p5eiDHtI+5woDczJipU9oc//IJE=",
+                                      "pseudo": "alabic",
+                                      "salt": "8Rz4I6YDdtfeEMd9dj3sL7uQnxoqj9",
+                                      "userId": 2
+                                  },
+                                  "name": "First houseshare",
+                                  "users": [
+                                      {
+                                          "email": "alabic@gmail.com",
+                                          "firstname": "Nemanja",
+                                          "lastname": "Alabic",
+                                          "password": "ZamCC0Gmlr2ic190p5eiDHtI+5woDczJipU9oc//IJE=",
+                                          "pseudo": "alabic",
+                                          "salt": "8Rz4I6YDdtfeEMd9dj3sL7uQnxoqj9",
+                                          "userId": 2
+                                      }
+                                  ]
+                              },
+                              "serviceId": 1,
+                              "status": 1,
+                              "title": "Faire le menage"
+                          },
+                          "to": {
+                              "email": "alabic@gmail.com",
+                              "firstname": "Nemanja",
+                              "lastname": "Alabic",
+                              "password": "ZamCC0Gmlr2ic190p5eiDHtI+5woDczJipU9oc//IJE=",
+                              "pseudo": "alabic",
+                              "salt": "8Rz4I6YDdtfeEMd9dj3sL7uQnxoqj9",
+                              "userId": 2
+                          },
+                          "valid": false
+                      }
+              401:
+                body:
+                  type: text/html
+                  example:
+                    Le mauvais jeton
+              404:
+                body:
+                  type: text/html
+                  example:
+                    L'entité n'est pas trouvé
+
+        /download-image:
+          get:
+            description: Recupère l'image du service rendu
+            headers:
+              Special token: string
+            responses:
+              200:
+                body:
+                  application/json:
+                    type: image/png
+              401:
+                body:
+                  type: text/html
+                  example:
+                    Le mauvais jeton
+              404:
+                body:
+                  type: text/html
+                  example:
+                    L'entité n'est pas trouvé

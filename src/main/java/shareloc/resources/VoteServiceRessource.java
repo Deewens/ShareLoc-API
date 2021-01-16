@@ -52,6 +52,11 @@ public class VoteServiceRessource {
     @Inject
     VoteServiceDAO voteServiceDAO;
 
+    /**
+     * Récupère tous les votes d'un service de la collocation d'id
+     *
+     * @return La liste de tous les votes de service
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getVoteServices() {
@@ -76,6 +81,12 @@ public class VoteServiceRessource {
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
 
+    /**
+     * Crée nouveau vote de service
+     *
+     * @param voteService VoteService à créer
+     * @return L'entité VoteService qui a été créée
+     */
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
