@@ -23,7 +23,7 @@ import java.util.Optional;
 import static shareloc.utils.CustomResponse.buildErrorResponse;
 
 @SignInNeeded
-@Path("/messages/{houseshareId}")
+@Path("/houseshares/{houseshareId}/messages")
 public class MessageRessource {
 
     @PathParam("houseshareId")
@@ -44,6 +44,11 @@ public class MessageRessource {
     @Inject
     HouseshareDAO houseshareDAO;
 
+    /**
+     * Récupère les messages de collocation d'id
+     *
+     * @return La liste des messages
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getMessages() {
@@ -72,6 +77,12 @@ public class MessageRessource {
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
 
+    /**
+     * Crée nouveau message
+     *
+     * @param obj Message à créer
+     * @return L'entité Message qui a été créée
+     */
     @SignInNeeded
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

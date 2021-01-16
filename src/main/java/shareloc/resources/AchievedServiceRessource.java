@@ -1,7 +1,6 @@
 package shareloc.resources;
 
 import jakarta.inject.Inject;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.groups.ConvertGroup;
@@ -57,6 +56,11 @@ public class AchievedServiceRessource {
     @Inject
     AchievedServiceDAO achievedServiceDAO;
 
+    /**
+     * Récupère la liste de tous les services rendus
+     *
+     * @return liste des services rendus
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAchievedServices() {
@@ -93,6 +97,12 @@ public class AchievedServiceRessource {
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
 
+    /**
+     * Récupère le service rendu d'id
+     *
+     * @param achievedServiceId
+     * @return liste des services rendus
+     */
     @GET
     @Path("{achievedServiceId}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -130,6 +140,12 @@ public class AchievedServiceRessource {
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
 
+    /**
+     * Créer le service rendu
+     *
+     * @param achievedService Le service rendu à créer
+     * @return L'entité AchievedService qui a été créé
+     */
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -300,8 +316,11 @@ public class AchievedServiceRessource {
 
     }
 
-    /*
-     * Download a PNG/JPEG file.
+    /**
+     * Recupère l'image du service rendu
+     *
+     * @param achievedServiceId
+     * return L'image
      */
     @GET
     @Path("/{achievedServiceId}/download-image")

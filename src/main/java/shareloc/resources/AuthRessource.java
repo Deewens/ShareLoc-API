@@ -27,6 +27,12 @@ public class AuthRessource {
     @Inject
     private PasswordUtils passwordUtils;
 
+    /**
+     * Connexion d'un utlisateur
+     *
+     * @param user L'utilisateur avec l'identifiant et le mot de passe
+     * @return L'entité User connecté
+     */
     @POST
     @Path("/login")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -57,6 +63,12 @@ public class AuthRessource {
                 "Email or password does not match with an existing user.");
     }
 
+    /**
+     * Inscription d'un utlisateur
+     *
+     * @param user L'utilisateur avec ses informations d'inscription
+     * @return L'entité User qui a été créée
+     */
     @POST
     @Path("/signup")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -105,6 +117,11 @@ public class AuthRessource {
         }
     }
 
+    /**
+     * Récupération du user grâce au token
+     *
+     * @return L'entité User connecté
+     */
     @GET
     @Path("/whoami")
     @Produces(MediaType.APPLICATION_JSON)
