@@ -1,10 +1,12 @@
 package shareloc.model.ejb;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import shareloc.model.validation.groups.AchievedServiceConstraints;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -35,8 +37,10 @@ public class AchievedService {
 
     @Column()
     private String picture;
+
+    @NotNull(groups = {AchievedServiceConstraints.UpdateAchievedServiceConstraint.class})
     @Column(nullable = false)
-    private boolean valid;
+    private Boolean valid;
 
     public AchievedService() {}
 

@@ -363,15 +363,23 @@ public class AchievedServiceRessource {
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
 
-    /*@PUT
-    @Path("{serviceId}")
+    /**
+     * Met à jour la validation du service achevé
+     *
+     * @param achievedServiceId ID du service à mettre à jour
+     * @param achievedServiceUpdated Service à mettre à jour
+     * @return Service achevé mis à jour
+     */
+    @PATCH
+    @Path("{achievedServiceId}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateService(@NotNull @PathParam("serviceId") Integer serviceId,
-                                  @Valid @ConvertGroup(to = ServiceConstraints.UpdateServiceConstraint.class) Service service) {
+    public Response updateAchievedService(@PathParam("achievedServiceId") int achievedServiceId,
+                                  @Valid @ConvertGroup(to = AchievedServiceConstraints.UpdateAchievedServiceConstraint.class) AchievedService achievedServiceUpdated) {
         Optional<User> loggedInUser = userDAO.findByPseudo(securityContext.getUserPrincipal().getName());
+        Optional<Houseshare> houseshare = houseshareDAO.findById(this.houseshareId);
+
         if (loggedInUser.isPresent()) {
-            Optional<Houseshare> houseshare = houseshareDAO.findById(this.houseshareId);
             if (houseshare.isEmpty()) {
                 return buildHouseshareNotFoundErrorResponse();
             }
@@ -380,29 +388,20 @@ public class AchievedServiceRessource {
                 return buildUserNotInHouseshareErrorResponse();
             }
 
-            Optional<Service> serviceToUpdate = serviceDAO.findById(serviceId);
-            if (serviceToUpdate.isEmpty()) {
-                return buildErrorResponse(
-                        Response.Status.NOT_FOUND,
-                        ErrorCode.NOT_FOUND,
-                        "Service not found",
-                        "The service you are trying to update does not exist");
+            Optional<AchievedService> achievedService = achievedServiceDAO.findById(achievedServiceId);
+            if (achievedService.isPresent()) {
+
+                achievedService.get().setValid(achievedServiceUpdated.isValid());
+
+                return Response.ok(achievedServiceDAO.update(achievedService.get())).build();
+
+            } else {
+                return Response.status(Response.Status.NOT_FOUND).build();
             }
-
-            Service serviceUpdated = serviceDAO.update(
-                    new Service(
-                            serviceToUpdate.get().getHouseshare(),
-                            service.getTitle(),
-                            service.getDescription(),
-                            service.getCost()
-                    )
-            );
-
-            return Response.ok(serviceUpdated).build();
         }
 
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-    }*/
+    }
 
     /*@DELETE
     @Path("{serviceId}")
