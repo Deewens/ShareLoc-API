@@ -630,6 +630,31 @@ types:
               example:
                 L'entité n'est pas trouvé
 
+    /myPoints:
+      get:
+        description: Récupère les points d'utilisateur connecté
+        headers:
+          Special token: string
+        responses:
+          200:
+            body:
+              application/json:
+                type: json
+                example: |
+                  {
+                    "points": 50
+                  }
+          401:
+            body:
+              type: text/html
+              example:
+                Le mauvais jeton
+          404:
+            body:
+              type: text/html
+              example:
+                L'entité n'est pas trouvé
+
     /messages:
       get:
         description: Récupère les messages de collocation d'id
@@ -1652,6 +1677,131 @@ types:
                         "userId": 2
                       },
                       "valid": false
+                    }
+            401:
+              body:
+                type: text/html
+                example:
+                  Le mauvais jeton
+            404:
+              body:
+                type: text/html
+                example:
+                  L'entité n'est pas trouvé
+
+        patch:
+          description: Met à jour la validation du service achevé
+          headers:
+            Special token: string
+          body:
+            application/json:
+              type: json
+              example: |
+                {
+                  "valid": true
+                }
+          responses:
+            200:
+              body:
+                application/json:
+                  type: json
+                  example: |
+                    {
+                      "achievedServiceId": 1,
+                      "date": "2020-12-30T23:00:00Z[UTC]",
+                      "from": {
+                        "email": "alabic@gmail.com",
+                        "firstname": "Nemanja",
+                        "lastname": "Alabic",
+                        "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                        "pseudo": "alabic",
+                        "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                        "userId": 1
+                      },
+                      "houseshare": {
+                        "houseshareId": 1,
+                        "manager": {
+                          "email": "alabic@gmail.com",
+                          "firstname": "Nemanja",
+                          "lastname": "Alabic",
+                          "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                          "pseudo": "alabic",
+                          "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                          "userId": 1
+                        },
+                        "name": "First houseshare",
+                        "users": [
+                          {
+                            "email": "alabic@gmail.com",
+                            "firstname": "Nemanja",
+                            "lastname": "Alabic",
+                            "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                            "pseudo": "alabic",
+                            "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                            "userId": 1
+                          },
+                          {
+                            "email": "deewens@gmail.com",
+                            "firstname": "Adrien",
+                            "lastname": "Dudon",
+                            "password": "do5Cp3EEAcAkHrnJZZ3xjmZzDmVjxPpHNV83AG4M3pI=",
+                            "pseudo": "deewens",
+                            "salt": "WuIk9IFeKYM9X2XJwzS0Wqn2Cp46xP",
+                            "userId": 2
+                          }
+                        ]
+                      },
+                      "picture": "",
+                      "service": {
+                        "cost": 80,
+                        "description": "test",
+                        "houseshare": {
+                          "houseshareId": 1,
+                          "manager": {
+                            "email": "alabic@gmail.com",
+                            "firstname": "Nemanja",
+                            "lastname": "Alabic",
+                            "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                            "pseudo": "alabic",
+                            "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                            "userId": 1
+                          },
+                          "name": "First houseshare",
+                          "users": [
+                            {
+                              "email": "alabic@gmail.com",
+                              "firstname": "Nemanja",
+                              "lastname": "Alabic",
+                              "password": "WIJfBqRf3+6xAdBDYrHn0+6R6pYwHI/mnrPMrb9qV4c=",
+                              "pseudo": "alabic",
+                              "salt": "BE6DSZrUenU7tjaL36Yp37zJm0U5Nm",
+                              "userId": 1
+                            },
+                            {
+                              "email": "deewens@gmail.com",
+                              "firstname": "Adrien",
+                              "lastname": "Dudon",
+                              "password": "do5Cp3EEAcAkHrnJZZ3xjmZzDmVjxPpHNV83AG4M3pI=",
+                              "pseudo": "deewens",
+                              "salt": "WuIk9IFeKYM9X2XJwzS0Wqn2Cp46xP",
+                              "userId": 2
+                            }
+                          ]
+                        },
+                        "serviceId": 3,
+                        "status": 1,
+                        "title": "ttt"
+                      },
+                      "to": {
+                        "email": "deewens@gmail.com",
+                        "firstname": "Adrien",
+                        "lastname": "Dudon",
+                        "password": "do5Cp3EEAcAkHrnJZZ3xjmZzDmVjxPpHNV83AG4M3pI=",
+                        "pseudo": "deewens",
+                        "salt": "WuIk9IFeKYM9X2XJwzS0Wqn2Cp46xP",
+                        "userId": 2
+                      },
+                      "valid": true
                     }
             401:
               body:
