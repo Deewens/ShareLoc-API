@@ -11,7 +11,6 @@ import java.util.Objects;
 
 @Entity
 public class User {
-    @NotNull(groups = { HouseshareConstraints.PostUsersConstraint.class })
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer userId;
@@ -20,8 +19,8 @@ public class User {
     @Column(unique = true, nullable = false)
     private String pseudo;
 
-    @NotBlank(groups = { SigningConstraint.class, Default.class })
-    @Email(groups = { SigningConstraint.class, Default.class })
+    @NotBlank(groups = { SigningConstraint.class, HouseshareConstraints.PostUsersConstraint.class, Default.class })
+    @Email(groups = { SigningConstraint.class, HouseshareConstraints.PostUsersConstraint.class, Default.class })
     @Column(unique = true, nullable = false)
     private String email;
 
