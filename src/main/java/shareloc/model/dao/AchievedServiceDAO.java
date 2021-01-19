@@ -25,6 +25,22 @@ public class AchievedServiceDAO extends DAO<AchievedService> {
         return query.getResultList();
     }
 
+    @Transactional
+    public List<AchievedService> findByHouseshareAndTo(Houseshare houseshare, User user) {
+        TypedQuery<AchievedService> query = em.createQuery("SELECT a FROM AchievedService a WHERE a.houseshare = :houseshare AND a.to = :user ORDER BY a.date, a.service.serviceId ASC", AchievedService.class);
+        query.setParameter("houseshare", houseshare);
+        query.setParameter("user", user);
+        return query.getResultList();
+    }
+
+    @Transactional
+    public List<AchievedService> findByHouseshareAndFrom(Houseshare houseshare, User user) {
+        TypedQuery<AchievedService> query = em.createQuery("SELECT a FROM AchievedService a WHERE a.houseshare = :houseshare AND a.from = :user ORDER BY a.date, a.service.serviceId ASC", AchievedService.class);
+        query.setParameter("houseshare", houseshare);
+        query.setParameter("user", user);
+        return query.getResultList();
+    }
+
 
     /**
      * Calcul le nombre de point d'un utilisateur en fonction de la co-location

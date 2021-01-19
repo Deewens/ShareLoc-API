@@ -256,7 +256,10 @@ public class AchievedServiceRessource {
 
             Optional<AchievedService> achievedService = achievedServiceDAO.findById(achievedServiceId);
             if (achievedService.isPresent()) {
-                String fileNameGiven = fileDetail.getFileName().toLowerCase();
+                String fileNameGiven = "picture.jpg";
+                if (fileDetail != null) {
+                    fileNameGiven = fileDetail.getFileName().toLowerCase();
+                }
                 String sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS_").format(new Date());
 
                 String uploadedFileLocation = "../uploadedImages/" + sdf + fileNameGiven;
