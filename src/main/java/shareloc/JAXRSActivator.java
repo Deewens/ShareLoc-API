@@ -15,16 +15,15 @@ import java.util.Set;
 
 
 @ApplicationPath("/api/*")
-public class JAXRSActivator extends Application {
-    /*public JAXRSActivator() {
-        packages("shareloc.resources");
-        packages("shareloc.security");
+public class JAXRSActivator extends ResourceConfig {
+    public JAXRSActivator() {
+        packages("shareloc");
         register(MultiPartFeature.class);
         property(ServerProperties.BV_SEND_ERROR_IN_RESPONSE, true);
 
-    }*/
+    }
 
-    @Override
+    /*@Override
     public Set<Class<?>> getClasses() {
         final Set<Class<?>> resources = new HashSet<>();
 
@@ -38,5 +37,5 @@ public class JAXRSActivator extends Application {
         props.put(ServerProperties.BV_SEND_ERROR_IN_RESPONSE, true);
         props.put("jersey.config.server.provider.packages", "shareloc");
         return props;
-    }
+    }*/
 }

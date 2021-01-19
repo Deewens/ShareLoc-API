@@ -221,7 +221,7 @@ public class HouseshareRessource {
      *
      * @param id
      * @param userParam L'utilisateur à ajouter dans la collocation
-     * @return La liste des tous les utilisateurs de la collocation
+     * @return L'utilisateur ajouté
      */
     @POST
     @Path("/{id}/users/")
@@ -231,7 +231,7 @@ public class HouseshareRessource {
         Optional<User> loggedInUser = userDAO.findByPseudo(securityContext.getUserPrincipal().getName());
 
         if (loggedInUser.isPresent()) {
-            Optional<User> user = userDAO.findById(userParam.getUserId());
+            Optional<User> user = userDAO.findByEmail(userParam.getEmail());
             Optional<Houseshare> houseshare = houseshareDAO.findById(id);
 
             if (houseshare.isEmpty()) {
@@ -252,9 +252,9 @@ public class HouseshareRessource {
 
             if (!houseshare.get().getUsers().contains(user.get())) {
                 houseshare.get().getUsers().add(user.get());
-                Houseshare houseshareResult = houseshareDAO.update(houseshare.get());
+                houseshareDAO.update(houseshare.get());
 
-                return Response.status(Response.Status.CREATED).entity(houseshareResult.getUsers()).build();
+                return Response.status(Response.Status.CREATED).entity(user.get()).build();
             } else {
                 return buildErrorResponse(
                         Response.Status.BAD_REQUEST,
@@ -331,8 +331,29 @@ public class HouseshareRessource {
     @GET
     @Path("/{houseshareId}/myPoints")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getMembersPoint() {
-        return null;
+    public Response getMembersPoint(@PathParam("houseshareId") int houseshareId) {
+        Optional<User> loggedInUser = userDAO.findByPseudo(securityContext.getUserPrincipal().getName());
+        Optional<Houseshare> houseshare = houseshareDAO.findById(houseshareId);
+
+        if (loggedInUser.isPresent()) {
+            if (houseshare.isEmpty()) {
+                return buildHouseshareNotFoundErrorResponse();
+            }
+
+            if (!houseshare.get().getUsers().contains(loggedInUser.get())) {
+                return buildUserNotInHouseshareErrorResponse();
+            }
+
+            int points = achievedServiceDAO.getPointsByUser(houseshare.get(), loggedInUser.get(), true);
+
+            Map<String, Integer> result = new HashMap<>();
+            result.put("points", points);
+
+            return Response.ok(result).build();
+
+        }
+
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
 
     /**
@@ -384,15 +405,19 @@ public class HouseshareRessource {
                 }
 
             } else { // on check les points pour tout les users de l'houseshares
+                List<User> members = houseshare.get().getUsers();
+                List<Map<String, Integer>> membersPoint = new ArrayList<>();
+                for (User member : members) {
+                    int points = achievedServiceDAO.getPointsByUser(houseshare.get(), member, true);
 
-                Map<String, Integer> result = new HashMap<>();
-                result.put("points", 0); // il faut le faire, mais c'est pas urgent et c'est vite fait
+                    Map<String, Integer> result = new HashMap<>();
+                    result.put("userId", member.getUserId());
+                    result.put("points", points); // il faut le faire, mais c'est pas urgent et c'est vite fait
+                    membersPoint.add(result);
+                }
 
-                return Response.ok(result).build();
+                return Response.ok(membersPoint).build();
             }
-
-
-
         }
 
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
