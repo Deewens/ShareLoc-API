@@ -106,7 +106,7 @@ public class VoteServiceRessource {
             if (service.isEmpty())
                 return buildHouseshareServiceNotFoundErrorResponse();
 
-            Optional<VoteService> votedService = voteServiceDAO.findByVoter(loggedInUser.get());
+            Optional<VoteService> votedService = voteServiceDAO.findByVoterAndService(loggedInUser.get(), service.get());
             if(!votedService.isEmpty())
                 return buildUserAlreadyVoted();
 
@@ -122,7 +122,7 @@ public class VoteServiceRessource {
                 int nevagiteVote = 0;
 
                 for (int i = 0; i < voteList.size(); i++) {
-                    if (voteList.get(i).getVote() == true) {
+                    if (voteList.get(i).getVote()) {
                         positiveVote++;
                     } else {
                         nevagiteVote++;

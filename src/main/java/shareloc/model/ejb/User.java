@@ -6,6 +6,7 @@ import jakarta.validation.groups.Default;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import shareloc.model.validation.groups.HouseshareConstraints;
 import shareloc.model.validation.groups.SigningConstraint;
+import shareloc.model.validation.groups.UserConstraints;
 
 import java.util.Objects;
 
@@ -15,12 +16,12 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer userId;
 
-    @NotBlank
+    @NotBlank(groups = {UserConstraints.PutUserConstraint.class, Default.class})
     @Column(unique = true, nullable = false)
     private String pseudo;
 
-    @NotBlank(groups = { SigningConstraint.class, HouseshareConstraints.PostUsersConstraint.class, Default.class })
-    @Email(groups = { SigningConstraint.class, HouseshareConstraints.PostUsersConstraint.class, Default.class })
+    @NotBlank(groups = { UserConstraints.PutUserConstraint.class, SigningConstraint.class, HouseshareConstraints.PostUsersConstraint.class, Default.class })
+    @Email(groups = { UserConstraints.PutUserConstraint.class, SigningConstraint.class, HouseshareConstraints.PostUsersConstraint.class, Default.class })
     @Column(unique = true, nullable = false)
     private String email;
 
@@ -29,11 +30,11 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @NotEmpty
+    @NotEmpty(groups = {UserConstraints.PutUserConstraint.class, Default.class})
     @Column(nullable = false)
     private String firstname;
 
-    @NotEmpty
+    @NotEmpty(groups = {UserConstraints.PutUserConstraint.class, Default.class})
     @Column(nullable = false)
     private String lastname;
 

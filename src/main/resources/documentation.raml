@@ -189,6 +189,43 @@ types:
           example:
             Le mauvais jeton
 
+/user:
+  /{userId}:
+    put:
+      description: Modification de l'utilisateur connecté
+      body:
+        application/json:
+          type: json
+          example: |
+            {
+              "firstname": "Adrien",
+              "lastname": "Dudon",
+              "email": "deewens@gmail.com",
+              "pseudo": "deewens"
+            }
+      headers:
+        Special token: string
+      responses:
+        200:
+          body:
+            application/json:
+              type: json
+              example: |
+                {
+                  "email": "deewens@gmail.com",
+                  "firstname": "Adrien",
+                  "lastname": "Dudon",
+                  "password": "CLoy82mK7pmUClBOG6XLnjpRWMXHL8yo/pLXBBFpOjE=",
+                  "pseudo": "test",
+                  "salt": "dRhNzX09PdeMxZWpu31w1S8fBItH1z",
+                  "userId": 2
+                }
+        401:
+          body:
+            type: text/html
+            example:
+              Le mauvais jeton
+
 /houseshares:
   get:
     description: Récupère la liste de toutes les colocations dont le membre est l'utilisateur connecté

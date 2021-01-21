@@ -104,6 +104,15 @@ public final class CustomResponse {
         );
     }
 
+    public static Response buildUserNotExistResponse() {
+        return buildErrorResponse(
+                Response.Status.NOT_FOUND,
+                ErrorCode.NOT_FOUND,
+                "User not exist",
+                "The user you gave does not exist"
+        );
+    }
+
     public static Response buildImageNotFoundErrorResponse() {
         File imageNotFound = new File("../uploadedImages/imageNotFound.jpg");
         if (!imageNotFound.exists()) {
