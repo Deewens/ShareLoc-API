@@ -31,6 +31,22 @@ public class VoteServiceDAO extends DAO<VoteService> {
     }
 
     @Transactional
+    public Optional<VoteService> findByVoterAndService(User voter, Service service) {
+        VoteService voteService;
+
+        TypedQuery<VoteService> query = em.createQuery("SELECT vs FROM VoteService vs WHERE vs.voter = :voter AND vs.service = :service", VoteService.class);
+        query.setParameter("voter", voter);
+        query.setParameter("service", service);
+
+        try {
+            voteService = query.getSingleResult();
+            return Optional.of(voteService);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Transactional
     public List<VoteService> findByService(Service service) {
         TypedQuery<VoteService> query = em.createQuery("SELECT vs FROM VoteService vs WHERE vs.service = :service", VoteService.class);
         query.setParameter("service", service);
