@@ -20,6 +20,7 @@ import shareloc.model.ejb.json.AchievedServiceJson;
 import shareloc.model.validation.groups.AchievedServiceConstraints;
 import shareloc.security.SignInNeeded;
 import shareloc.utils.ErrorCode;
+import static shareloc.utils.UserRight.*;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -72,7 +73,7 @@ public class AchievedServiceRessource {
                 return buildHouseshareNotFoundErrorResponse();
             }
 
-            if (!houseshare.get().getUsers().contains(loggedInUser.get())) {
+            if(!isUserIntoHouseshare(loggedInUser.get(), houseshare.get())) {
                 return buildUserNotInHouseshareErrorResponse();
             }
 

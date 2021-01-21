@@ -9,10 +9,12 @@ import shareloc.model.dao.UserDAO;
 import shareloc.model.ejb.User;
 import shareloc.model.validation.groups.SigningConstraint;
 import shareloc.model.validation.ValidationErrorResponse;
+import shareloc.model.validation.groups.UserConstraints;
 import shareloc.security.PasswordUtils;
 import shareloc.security.JWTokenUtility;
 import shareloc.security.SignInNeeded;
 import shareloc.utils.ErrorCode;
+import static shareloc.utils.CustomResponse.*;
 
 import java.util.*;
 
@@ -136,5 +138,41 @@ public class AuthRessource {
         }
 
         return Response.status(Response.Status.NOT_FOUND).build();
+    }
+
+    /**
+     * Modification de l'USER
+     *
+     * @return L'entité User modifié
+     */
+    @PUT
+    @Path("/user/{userId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @SignInNeeded
+    public Response updateUser(@Context SecurityContext security,
+                               @PathParam("userId") int userId,
+                               @Valid @ConvertGroup(to = UserConstraints.PutUserConstraint.class) User user) {
+        Optional<User> loggedInUser = userDAO.findByPseudo(security.getUserPrincipal().getName());
+
+        Optional<User> userToUpdate = userDAO.findById(userId);
+
+        if (loggedInUser.isPresent()) {
+            if (userToUpdate.isEmpty()) {
+                return buildUserNotExistResponse();
+            }
+
+            if (loggedInUser.get().getUserId() != userToUpdate.get().getUserId()) {
+                return Response.status(Response.Status.UNAUTHORIZED).build();
+            }
+
+            userToUpdate.get().setFirstname(user.getFirstname());
+            userToUpdate.get().setLastname(user.getLastname());
+            userToUpdate.get().setPseudo(user.getPseudo());
+            userToUpdate.get().setEmail(user.getEmail());
+
+            return Response.ok(userDAO.update(userToUpdate.get())).build();
+        }
+
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
 }
